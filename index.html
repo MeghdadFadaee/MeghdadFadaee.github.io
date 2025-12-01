@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player 1: Meghdad Fadadee</title>
+
+    <!-- NES.css Framework -->
+    <link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet" />
+    <!-- Google Fonts: Press Start 2P -->
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <!-- Tailwind CSS (for layout utilities) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Core Aesthetics */
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #212529;
+            color: #fff;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="fill:white"><rect x="0" y="0" width="6" height="16"/><rect x="6" y="6" width="10" height="4"/></svg>'), auto;
+            overflow-x: hidden;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #212529;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d3d3d3;
+            border: 4px solid #212529;
+        }
+
+        /* Terminal blinking cursor */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 16px;
+            background-color: #209cee;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Floating Animation for Header Icons */
+        .float-anim {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Fix for NES.css overlap on mobile */
+        .nes-container.with-title > .title {
+            background-color: #212529;
+            margin-bottom: 0;
+        }
+
+        /* CRT Scanline Effect (Optional, subtle) */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .w-24 {
+            width: 6rem !important;
+        }
+
+        #name_field, #msg_field {
+            color: #212529;
+        }
+    </style>
+</head>
+<body class="crt">
+
+<!-- Navbar -->
+<nav class="sticky top-0 z-50 p-4 bg-[#212529] border-b-4 border-white">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="text-[#209cee]">
+            <i class="nes-icon coin is-small"></i> Meghdad Fadadee
+        </div>
+        <div class="hidden md:block">
+            <a href="#about" class="nes-btn is-primary">Stats</a>
+            <a href="#projects" class="nes-btn is-success">Quests</a>
+            <a href="#contact" class="nes-btn is-warning">Connect</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mx-auto px-4 mt-12 space-y-20">
+
+    <!-- Hero / Terminal Section -->
+    <section id="hero" class="flex flex-col items-center justify-center min-h-[60vh]">
+        <div class="nes-balloon from-left mb-8 text-black">
+            <p>Hello! I build the systems behind the screens.</p>
+        </div>
+        <i class="nes-octocat animate float-anim"></i>
+
+        <div class="nes-container is-dark with-title w-full max-w-4xl mt-8">
+            <p class="title">Terminal</p>
+            <div id="terminal-output" class="mb-4 text-green-400 text-sm md:text-base font-mono h-48 overflow-y-auto">
+                <p>Last login: Today from 127.0.0.1</p>
+                <p>> initializing_backend_skills...</p>
+                <p>> loading_modules: [GO, Laravel, Python, Docker, SQL]...</p>
+                <p>> system_status: <span class="text-green-500">ONLINE</span></p>
+                <p>> type 'help' for commands.</p>
+                <br>
+            </div>
+            <div class="flex items-center">
+                <span class="text-blue-400 mr-2">meghdad@github:~$</span>
+                <input type="text" id="terminal-input" class="bg-transparent border-none outline-none text-white w-full font-mono" autocomplete="off" autofocus>
+            </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2 text-center mobile-hint md:hidden">(Tap console to type)</p>
+    </section>
+
+    <!-- About / Stats Section -->
+    <section id="about" class="pt-8">
+        <div class="nes-container with-title is-dark">
+            <p class="title">Player Stats</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <!-- Avatar & Base Stats -->
+                <div class="text-center">
+                    <div class="inline-block p-4 border-4 border-white mb-4">
+                        <!-- Placeholder Pixel Art -->
+                        <i class="nes-icon is-large star"></i>
+                    </div>
+                    <h2 class="text-xl text-[#e76e55]">Backend Architect</h2>
+                    <p class="text-xs text-gray-400 mt-2">Level 24 Engineer</p>
+
+                    <div class="mt-6 text-left space-y-4 max-w-xs mx-auto">
+                        <div>
+                            <span class="text-xs">HP (Caffeine)</span>
+                            <progress class="nes-progress is-error" value="90" max="100"></progress>
+                        </div>
+                        <div>
+                            <span class="text-xs">MP (Creativity)</span>
+                            <progress class="nes-progress is-primary" value="85" max="100"></progress>
+                        </div>
+                        <div>
+                            <span class="text-xs">EXP (Years)</span>
+                            <progress class="nes-progress is-success" value="60" max="100"></progress>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tech Stack Lists -->
+                <div>
+                    <p class="mb-4">Special Items (Skills):</p>
+                    <div class="lists">
+                        <ul class="nes-list is-disc">
+                            <li>Languages: PHP, Go, Python, Node.js</li>
+                            <li>Database: PostgreSQL, Redis, Mongo</li>
+                            <li>DevOps: Docker, AWS, CI/CD</li>
+                            <li>Architecture: Microservices, gRPC</li>
+                        </ul>
+                    </div>
+                    <div class="mt-6 p-4 bg-[#212529] border-4 border-[#92cc41]">
+                        <p class="text-[#92cc41]">> "I prefer the TUI over a GUI any day."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="pt-8">
+        <div class="flex items-center mb-8">
+            <i class="nes-icon trophy is-large mr-4"></i>
+            <h2 class="text-2xl">Quest Log (Projects)</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- Project 1 -->
+            <div class="nes-container is-rounded is-dark">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-[#f7d51d]">Mahak API</span>
+                    <i class="nes-icon close is-small bg-red-500"></i>
+                </div>
+                <p class="text-xs h-20 text-gray-300">A high-throughput API written in Laravel. Handles over million users and 20K concurrent request.</p>
+                <div class="mt-4 mb-4">
+                        <span class="nes-badge is-icon">
+                            <span class="is-dark">PHP</span>
+                            <span class="is-warning w-24">Laravel</span>
+                        </span>
+                </div>
+                <a href="https://play.google.com/store/apps/details?id=com.dabestaniha.mahak" class="nes-btn is-primary w-full" target="_blank">Download Now</a>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="nes-container is-rounded is-dark">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-[#92cc41]">Data Safety</span>
+                    <i class="nes-icon coin is-small"></i>
+                </div>
+                <p class="text-xs h-20 text-gray-300">Powerful data back up with in any SQL mirror or S3 Bucket Storage.</p>
+                <div class="mt-4 mb-4">
+                        <span class="nes-badge is-icon">
+                            <span class="is-dark">Data</span>
+                            <span class="is-success">Docker</span>
+                        </span>
+                </div>
+                <a href="#contact" class="nes-btn is-primary w-full">Start</a>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="nes-container is-rounded is-dark">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-[#ce372b]">LMS Services</span>
+                    <i class="nes-icon heart is-small"></i>
+                </div>
+                <p class="text-xs h-20 text-gray-300">Several Learning Management System, implemented with varies frameworks.</p>
+                <div class="mt-4 mb-4">
+                        <span class="nes-badge is-icon">
+                            <span class="is-dark">Node</span>
+                            <span class="is-error">VUE</span>
+                        </span>
+                </div>
+                <a href="https://mohieddin.ir" class="nes-btn is-primary w-full">Example</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Social / Contact -->
+    <section id="contact" class="pt-16 pb-16">
+        <div class="nes-container with-title is-center">
+            <p class="title">Join Party</p>
+            <p class="mb-8">Ready to raid? Send me an invite.</p>
+
+            <div class="flex justify-center gap-6 flex-wrap">
+                <a href="https://github.com/MeghdadFadaee" class="nes-btn">
+                    <i class="nes-icon github is-small"></i> GitHub
+                </a>
+                <a href="https://t.me/MeghdadFadaee" class="nes-btn is-primary">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+                <a href="tel:09359484943" class="nes-btn is-success">
+                    <i class="fas fa-phone"></i> Call
+                </a>
+                <a href="mailto:MeghdadFadaee@gmail.com" class="nes-btn is-error">
+                    <i class="nes-icon gmail is-small"></i> Email
+                </a>
+            </div>
+
+            <div class="mt-8 max-w-md mx-auto">
+                <div class="nes-field">
+                    <label for="name_field">Your Name</label>
+                    <input type="text" id="name_field" class="nes-input" placeholder="Player 2">
+                    <p id="name_field_error" class="text-xs text-red-300 hidden">Error: Name field cannot be null.</p>
+
+                </div>
+                <div class="nes-field mt-4">
+                    <label for="msg_field">Message</label>
+                    <textarea id="msg_field" class="nes-textarea" placeholder="Let's build something..."></textarea>
+                </div>
+                <button type="button" class="nes-btn is-success mt-4 w-full" onclick="sendMessage()">SEND PACKET</button>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="text-center p-8 bg-black border-t-4 border-[#212529]">
+    <p class="text-xs text-gray-500">© 2025 Meghdad Fadaee. Built with NES.css</p>
+    <div class="mt-4">
+        <i class="nes-icon is-small heart"></i>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script>
+    // --- Terminal Logic ---
+    const terminalOutput = document.getElementById('terminal-output');
+    const terminalInput = document.getElementById('terminal-input');
+
+    const commands = {
+        'help': 'Available commands: about, skills, projects, contact, clear, whoami',
+        'whoami': 'root_user // backend_specialist',
+        'about': 'Navigating to #about section...',
+        'skills': 'Listing loaded modules in #about...',
+        'projects': 'Fetching quest log from #projects...',
+        'contact': 'Opening transmission channel at #contact...',
+        'clear': 'CLEAR_SCREEN'
+    };
+
+    terminalInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const input = this.value.toLowerCase().trim();
+            let response = `Command not found: ${input}. Try 'help'.`;
+
+            if (commands[input]) {
+                response = commands[input];
+                // Execute actions
+                if(input === 'about') document.querySelector('#about').scrollIntoView();
+                if(input === 'skills') document.querySelector('#about').scrollIntoView();
+                if(input === 'projects') document.querySelector('#projects').scrollIntoView();
+                if(input === 'contact') document.querySelector('#contact').scrollIntoView();
+            }
+
+            if (input === 'clear') {
+                terminalOutput.innerHTML = '';
+            } else {
+                addToTerminal(`meghdad@github:~$ ${input}`);
+                addToTerminal(`> ${response}`);
+            }
+
+            this.value = '';
+            // Keep scroll at bottom
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+    });
+
+    function addToTerminal(text) {
+        const p = document.createElement('p');
+        p.innerText = text;
+        terminalOutput.appendChild(p);
+    }
+
+    // --- Contact Form Mockup ---
+    function sendMessage() {
+
+        const btn = document.querySelector('.nes-btn.is-success');
+        const originalText = btn.innerText;
+
+        const name_field = document.getElementById('name_field');
+        const name_field_error = document.getElementById('name_field_error');
+
+        if(name_field.value === '') {
+            name_field.classList.add('is-error');
+            name_field_error.classList.remove('hidden');
+            return;
+        }
+
+        name_field.classList.remove('is-error');
+        name_field_error.classList.add('hidden');
+
+        btn.classList.remove('is-success');
+        btn.classList.add('is-disabled');
+        btn.innerText = 'SENDING...';
+
+        setTimeout(() => {
+            btn.classList.remove('is-disabled');
+            btn.classList.add('is-success');
+            btn.innerText = 'PACKET SENT!';
+            setTimeout(() => {
+                btn.innerText = originalText;
+                document.getElementById('name_field').value = '';
+                document.getElementById('msg_field').value = '';
+            }, 2000);
+        }, 1500);
+    }
+</script>
+</body>
+</html>

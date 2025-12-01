@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازیکن ۱: مقداد فدایی</title>
+
+    <!-- NES.css Framework -->
+    <link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet" />
+    <!-- Google Fonts: Lalezar (Retro/Display) and Vazirmatn (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Core Aesthetics */
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #212529;
+            color: #fff;
+            /* Custom cursor */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="fill:white"><rect x="0" y="0" width="6" height="16"/><rect x="6" y="6" width="10" height="4"/></svg>'), auto;
+            overflow-x: hidden;
+        }
+
+        /* Headings in Retro Font */
+        h1, h2, h3, .title, .nes-btn, nav {
+            font-family: 'Lalezar', cursive;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #212529;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d3d3d3;
+            border: 4px solid #212529;
+        }
+
+        /* Terminal blinking cursor */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 16px;
+            background-color: #209cee;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Floating Animation */
+        .float-anim {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* NES.css RTL Fixes */
+        .nes-container.with-title > .title {
+            background-color: #212529;
+            margin-bottom: 0;
+        }
+
+        .nes-list.is-disc {
+            padding-right: 1.5rem; /* RTL padding */
+            padding-left: 0;
+            margin-right: 1rem;
+        }
+
+        .nes-balloon.from-left::before, .nes-balloon.from-left::after {
+            /* Adjust balloon tail for RTL if needed, usually looks okay or needs flipping.
+               NES css doesn't fully support RTL tails, so we keep simple. */
+        }
+
+        /* Mirroring icons if needed, but usually code icons stay LTR */
+
+        /* CRT Scanline Effect */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #name_field, #msg_field {
+            color: #212529;
+        }
+    </style>
+</head>
+<body class="crt">
+
+<!-- Navbar -->
+<nav class="sticky top-0 z-50 p-4 bg-[#212529] border-b-4 border-white">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="text-[#209cee] text-lg">
+            <i class="nes-icon coin is-small ml-2"></i>مقداد فدایی
+        </div>
+        <div class="hidden md:block space-x-reverse space-x-4">
+            <a href="#about" class="nes-btn is-primary mx-2">آمار</a>
+            <a href="#projects" class="nes-btn is-success mx-2">مأموریت‌ها</a>
+            <a href="#contact" class="nes-btn is-warning mx-2">ارتباط</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mx-auto px-4 mt-12 space-y-20">
+
+    <!-- Hero / Terminal Section -->
+    <section id="hero" class="flex flex-col items-center justify-center min-h-[60vh]">
+        <!-- Using nes-balloon with text-black for visibility -->
+        <div class="nes-balloon from-right mb-8 text-black" style="direction: rtl;">
+            <p>سلام! من سیستم‌های پشت صحنه را می‌سازم.</p>
+        </div>
+        <i class="nes-octocat animate float-anim"></i>
+
+        <div class="nes-container is-dark with-title w-full max-w-4xl mt-8">
+            <p class="title">ترمینال</p>
+            <div id="terminal-output" class="mb-4 text-green-400 text-sm md:text-base font-mono h-48 overflow-y-auto text-right" dir="ltr">
+                <p class="text-left">> Last login: Today from 127.0.0.1</p>
+                <p class="text-left">> initializing_backend_skills...</p>
+                <p class="text-left">> loading_modules: [GO, Laravel, Python, Docker, SQL]...</p>
+                <p class="text-left">> system_status: <span class="text-green-500">ONLINE</span></p>
+                <p class="text-left">> برای شروع دستور <span class="text-white">'help'</span> را تایپ کنید.</p>
+                <br>
+            </div>
+            <div class="flex items-center" dir="ltr">
+                <span class="text-blue-400 mr-2">meghdad@github:~$</span>
+                <input type="text" id="terminal-input" class="bg-transparent border-none outline-none text-white w-full font-mono" autocomplete="off" autofocus>
+            </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2 text-center mobile-hint md:hidden">(روی کنسول ضربه بزنید)</p>
+    </section>
+
+    <!-- About / Stats Section -->
+    <section id="about" class="pt-8">
+        <div class="nes-container with-title is-dark">
+            <p class="title">آمار بازیکن</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <!-- Avatar & Base Stats -->
+                <div class="text-center">
+                    <div class="inline-block p-4 border-4 border-white mb-4">
+                        <!-- Placeholder Pixel Art -->
+                        <i class="nes-icon is-large star"></i>
+                    </div>
+                    <h2 class="text-2xl text-[#e76e55]">معمار بک‌اند</h2>
+                    <p class="text-sm text-gray-400 mt-2">مهندس سطح ۲۴</p>
+
+                    <div class="mt-6 text-right space-y-4 max-w-xs mx-auto" dir="rtl">
+                        <div>
+                            <span class="text-xs">سلامت (کافئین)</span>
+                            <progress class="nes-progress is-error" value="90" max="100"></progress>
+                        </div>
+                        <div>
+                            <span class="text-xs">جادو (خلاقیت)</span>
+                            <progress class="nes-progress is-primary" value="85" max="100"></progress>
+                        </div>
+                        <div>
+                            <span class="text-xs">تجربه (سال‌ها)</span>
+                            <progress class="nes-progress is-success" value="60" max="100"></progress>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tech Stack Lists -->
+                <div>
+                    <p class="mb-4 font-bold text-lg text-right">آیتم‌های ویژه (مهارت‌ها):</p>
+                    <div class="lists text-right">
+                        <ul class="nes-list is-disc">
+                            <li>زبان‌ها: PHP, Go, Python, Node.js</li>
+                            <li>پایگاه داده: PostgreSQL, Redis, Mongo</li>
+                            <li>دوآپس: Docker, AWS, CI/CD</li>
+                            <li>معماری: Microservices, gRPC</li>
+                        </ul>
+                    </div>
+                    <div class="mt-6 p-4 bg-[#212529] border-4 border-[#92cc41]">
+                        <p class="text-[#92cc41] text-right">> "ترمینال را به رابط گرافیکی ترجیح می‌دهم."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="pt-8">
+        <div class="flex items-center mb-8">
+            <i class="nes-icon trophy is-large ml-4"></i>
+            <h2 class="text-3xl">دفترچه مأموریت (پروژه‌ها)</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- Project 1 -->
+            <div class="nes-container is-rounded is-dark">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-[#f7d51d] text-lg">ماهک API</span>
+                    <i class="nes-icon close is-small bg-red-500 cursor-pointer"></i>
+                </div>
+                <p class="text-sm h-20 text-gray-300 leading-6 text-right">یک API با توان عملیاتی بالا که با لاراول نوشته شده است. بیش از میلیون‌ها کاربر و 20 هزار درخواست همزمان را مدیریت می‌کند.</p>
+                <div class="mt-4 mb-4" dir="ltr">
+                        <span class="nes-badge is-icon">
+                            <span class="is-dark">PHP</span>
+                            <span class="is-warning">Laravel</span>
+                        </span>
+                </div>
+                <a href="https://play.google.com/store/apps/details?id=com.dabestaniha.mahak" class="nes-btn is-primary w-full" target="_blank">دانلود</a>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="nes-container is-rounded is-dark">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-[#92cc41] text-lg">امنیت داده</span>
+                    <i class="nes-icon coin is-small"></i>
+                </div>
+                <p class="text-sm h-20 text-gray-300 leading-6 text-right">پشتیبان‌گیری قدرتمند از داده‌ها در هر SQL mirror یا S3 Bucket Storage.</p>
+                <div class="mt-4 mb-4" dir="ltr">
+                        <span class="nes-badge is-icon">
+                            <span class="is-dark">Data</span>
+                            <span class="is-success">Docker</span>
+                        </span>
+                </div>
+                <a href="#contact" class="nes-btn is-primary w-full">شروع</a>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="nes-container is-rounded is-dark">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-[#ce372b] text-lg">خدمات LMS</span>
+                    <i class="nes-icon heart is-small"></i>
+                </div>
+                <p class="text-sm h-20 text-gray-300 leading-6 text-right">چندین سیستم مدیریت یادگیری، که با چارچوب‌های مختلفی پیاده‌سازی شده‌اند.</p>
+                <div class="mt-4 mb-4" dir="ltr">
+                        <span class="nes-badge is-icon">
+                            <span class="is-dark">Node</span>
+                            <span class="is-error">VUE</span>
+                        </span>
+                </div>
+                <a href="https://mohieddin.ir" class="nes-btn is-primary w-full">نمونه</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Social / Contact -->
+    <section id="contact" class="pt-16 pb-16">
+        <div class="nes-container with-title is-center">
+            <p class="title">پیوستن به گروه</p>
+            <p class="mb-8 text-right">آماده حمله هستید؟ برایم دعوت‌نامه بفرستید.</p>
+
+            <div class="flex justify-center gap-6 flex-wrap" dir="ltr">
+                <a href="https://github.com/MeghdadFadaee" class="nes-btn">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="https://t.me/MeghdadFadaee" class="nes-btn is-primary">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+                <a href="tel:09359484943" class="nes-btn is-success">
+                    <i class="fas fa-phone"></i> Call
+                </a>
+                <a href="mailto:MeghdadFadaee@gmail.com" class="nes-btn is-error">
+                    <i class="fas fa-envelope"></i> Email
+                </a>
+            </div>
+
+            <div class="mt-8 max-w-md mx-auto text-right">
+                <div class="nes-field">
+                    <label for="name_field">نام شما</label>
+                    <input type="text" id="name_field" class="nes-input" placeholder="بازیکن ۲">
+                    <p id="name_field_error" class="text-xs text-red-300 hidden">خطا: فیلد نام نمی‌تواند خالی باشد.</p>
+
+                </div>
+                <div class="nes-field mt-4">
+                    <label for="msg_field">پیام</label>
+                    <textarea id="msg_field" class="nes-textarea" placeholder="بیایید چیزی بسازیم..."></textarea>
+                </div>
+                <button type="button" class="nes-btn is-success mt-4 w-full" onclick="sendMessage()">ارسال پکت</button>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="text-center p-8 bg-black border-t-4 border-[#212529]">
+    <p class="text-xs text-gray-500" dir="ltr">© 2025 Meghdad Fadaee. Built with NES.css</p>
+    <div class="mt-4">
+        <i class="nes-icon is-small heart"></i>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script>
+    // --- Terminal Logic ---
+    const terminalOutput = document.getElementById('terminal-output');
+    const terminalInput = document.getElementById('terminal-input');
+
+    const commands = {
+        'help': 'دستورات موجود: about, skills, projects, contact, clear, whoami',
+        'whoami': 'root_user // متخصص_بک‌اند',
+        'about': 'حرکت به بخش #about ...',
+        'skills': 'لیست کردن ماژول‌های بارگذاری شده در #about ...',
+        'projects': 'دریافت گزارش مأموریت‌ها از #projects ...',
+        'contact': 'باز کردن کانال ارتباطی در #contact ...',
+        'clear': 'CLEAR_SCREEN'
+    };
+
+    terminalInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const input = this.value.toLowerCase().trim();
+            let response = `دستور پیدا نشد: ${input}. دستور 'help' را امتحان کنید.`;
+
+            if (commands[input]) {
+                response = commands[input];
+                // Execute actions
+                if(input === 'about') document.querySelector('#about').scrollIntoView();
+                if(input === 'skills') document.querySelector('#about').scrollIntoView();
+                if(input === 'projects') document.querySelector('#projects').scrollIntoView();
+                if(input === 'contact') document.querySelector('#contact').scrollIntoView();
+            }
+
+            if (input === 'clear') {
+                terminalOutput.innerHTML = '';
+            } else {
+                addToTerminal(`meghdad@github:~$ ${input}`, 'ltr'); // Keep command LTR
+                addToTerminal(`> ${response}`, 'rtl'); // Response can be RTL
+            }
+
+            this.value = '';
+            // Keep scroll at bottom
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+    });
+
+    function addToTerminal(text, dir = 'rtl') {
+        const p = document.createElement('p');
+        p.innerText = text;
+        p.className = dir === 'ltr' ? 'text-left' : 'text-right';
+        p.style.direction = dir;
+        terminalOutput.appendChild(p);
+    }
+
+    // --- Contact Form Mockup ---
+    function sendMessage() {
+        const btn = document.querySelector('.nes-btn.is-success');
+        const originalText = btn.innerText;
+
+        const name_field = document.getElementById('name_field');
+        const name_field_error = document.getElementById('name_field_error');
+
+        if(name_field.value === '') {
+            name_field.classList.add('is-error');
+            name_field_error.classList.remove('hidden');
+            return;
+        }
+
+        name_field.classList.remove('is-error');
+        name_field_error.classList.add('hidden');
+
+        btn.classList.remove('is-success');
+        btn.classList.add('is-disabled');
+        btn.innerText = 'در حال ارسال...';
+
+        setTimeout(() => {
+            btn.classList.remove('is-disabled');
+            btn.classList.add('is-success');
+            btn.innerText = 'پکت ارسال شد!';
+            setTimeout(() => {
+                btn.innerText = originalText;
+                document.getElementById('name_field').value = '';
+                document.getElementById('msg_field').value = '';
+            }, 2000);
+        }, 1500);
+    }
+</script>
+</body>
+</html>
