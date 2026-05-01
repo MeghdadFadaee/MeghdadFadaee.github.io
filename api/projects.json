@@ -1,59 +1,313 @@
 {
-  "version": 1,
+  "version": 2,
   "updatedAt": "2026-05-01",
+  "generatedFrom": "data/github-project-scan.json",
+  "scanSummary": {
+    "scannedAt": "2026-05-01T15:39:00.6052345Z",
+    "repositoryCount": 200,
+    "owners": [
+      "MeghdadFadaee",
+      "dabestaniha"
+    ],
+    "note": "Portfolio entries are grouped from public and private repositories. Private repository names are intentionally not listed here."
+  },
   "projects": [
     {
-      "title": "Mahak API",
+      "title": "Mahak Backend Platform",
       "accent": "#f7d51d",
-      "icon": "close",
-      "iconClass": "bg-red-500",
-      "summary": "A high-throughput API written in Laravel. Handles over million users and 20K concurrent request.",
+      "icon": "trophy",
+      "summary": "Service platform for Dabestaniha apps: auth, shop, LMS, campaigns, game maps, payments, notifications, API documentation, and admin workflows.",
       "tags": [
         {
-          "group": "PHP",
-          "label": "Laravel",
+          "group": "API",
+          "label": "PHP",
           "style": "is-warning"
-        }
-      ],
-      "cta": {
-        "label": "Download Now",
-        "href": "https://play.google.com/store/apps/details?id=com.dabestaniha.mahak",
-        "external": true
-      }
-    },
-    {
-      "title": "Data Safety",
-      "accent": "#92cc41",
-      "icon": "coin",
-      "summary": "Powerful data back up with in any SQL mirror or S3 Bucket Storage.",
-      "tags": [
+        },
         {
-          "group": "Data",
-          "label": "Docker",
-          "style": "is-success"
+          "group": "Stack",
+          "label": "Laravel",
+          "style": "is-primary"
         }
       ],
       "cta": {
-        "label": "Start",
+        "label": "Contact",
         "href": "#contact",
         "external": false
       }
     },
     {
-      "title": "LMS Services",
-      "accent": "#ce372b",
-      "icon": "heart",
-      "summary": "Several Learning Management System, implemented with varies frameworks.",
+      "title": "Mahak Kids App Ecosystem",
+      "accent": "#92cc41",
+      "icon": "star",
+      "summary": "Android and multiplatform app work for kids, including Kotlin clients, shared libraries, educational games, and Compose/KMP experiments.",
       "tags": [
         {
-          "group": "Node",
-          "label": "VUE",
-          "style": "is-error"
+          "group": "App",
+          "label": "Kotlin",
+          "style": "is-success"
+        },
+        {
+          "group": "UI",
+          "label": "Compose",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "Play Store",
+        "href": "https://play.google.com/store/apps/details?id=com.dabestaniha.mahak",
+        "external": true
+      }
+    },
+    {
+      "title": "Learning & Content Apps",
+      "accent": "#209cee",
+      "icon": "heart",
+      "summary": "A suite of education and content apps covering language learning, LMS flows, religious content, stories, media guides, and user progress.",
+      "tags": [
+        {
+          "group": "Mobile",
+          "label": "Kotlin",
+          "style": "is-primary"
+        },
+        {
+          "group": "Web",
+          "label": "Vue",
+          "style": "is-success"
         }
       ],
       "cta": {
         "label": "Example",
         "href": "https://mohieddin.ir",
+        "external": true
+      }
+    },
+    {
+      "title": "Modular Android Architecture",
+      "accent": "#e76e55",
+      "icon": "coin",
+      "summary": "Reusable feature modules and themed UI/data packages for LMS, inbox, gallery, dictionary, messaging, campaigns, competitions, content, and notifications.",
+      "tags": [
+        {
+          "group": "Arch",
+          "label": "Modules",
+          "style": "is-error"
+        },
+        {
+          "group": "Build",
+          "label": "Gradle",
+          "style": "is-warning"
+        }
+      ],
+      "cta": {
+        "label": "Contact",
+        "href": "#contact",
+        "external": false
+      }
+    },
+    {
+      "title": "Quranic Train & Games",
+      "accent": "#ce372b",
+      "icon": "trophy",
+      "summary": "Educational game work around Quranic learning, including C# mini-games, Kotlin clients, game-map components, and supporting backend services.",
+      "tags": [
+        {
+          "group": "Game",
+          "label": "C#",
+          "style": "is-error"
+        },
+        {
+          "group": "App",
+          "label": "Kotlin",
+          "style": "is-success"
+        }
+      ],
+      "cta": {
+        "label": "Play Store",
+        "href": "Quranic Train & Games",
+        "external": true
+      }
+    },
+    {
+      "title": "Build & DevOps Automation",
+      "accent": "#f7d51d",
+      "icon": "star",
+      "summary": "Automation for app builds, deployments, Gradle plugin work, Docker service configs, Dropbox Paper documentation sync, and release helpers.",
+      "tags": [
+        {
+          "group": "Ops",
+          "label": "Python",
+          "style": "is-warning"
+        },
+        {
+          "group": "CI",
+          "label": "Docker",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "Contact",
+        "href": "#contact",
+        "external": false
+      }
+    },
+    {
+      "title": "Public Web & Compliance Pages",
+      "accent": "#92cc41",
+      "icon": "coin",
+      "summary": "Public-facing privacy policies, account deletion pages, landing pages, and static service pages for multiple Dabestaniha products.",
+      "tags": [
+        {
+          "group": "Web",
+          "label": "HTML",
+          "style": "is-success"
+        },
+        {
+          "group": "UX",
+          "label": "JS",
+          "style": "is-warning"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/dabestaniha",
+        "external": true
+      }
+    },
+    {
+      "title": "Fluent Chat",
+      "accent": "#209cee",
+      "icon": "heart",
+      "summary": "A modern Laravel chat platform with Livewire, Flux UI, group and direct conversations, file messages, settings, and feature tests.",
+      "tags": [
+        {
+          "group": "PHP",
+          "label": "Laravel",
+          "style": "is-primary"
+        },
+        {
+          "group": "UI",
+          "label": "Flux",
+          "style": "is-success"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/fluent-chat",
+        "external": true
+      }
+    },
+    {
+      "title": "ISP & Telecom Clients",
+      "accent": "#e76e55",
+      "icon": "coin",
+      "summary": "Python clients for Iranian telecom and ISP portals, handling login/session reuse and package or service status extraction.",
+      "tags": [
+        {
+          "group": "Lang",
+          "label": "Python",
+          "style": "is-error"
+        },
+        {
+          "group": "API",
+          "label": "Client",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/mci-client",
+        "external": true
+      }
+    },
+    {
+      "title": "Text Rendering Engine",
+      "accent": "#ce372b",
+      "icon": "star",
+      "summary": "A Python and Pillow CLI for Photoshop-like text rendering with gradients, stroke, shadow, glow, rotation, validation, and RTL support.",
+      "tags": [
+        {
+          "group": "CLI",
+          "label": "Python",
+          "style": "is-error"
+        },
+        {
+          "group": "Image",
+          "label": "Pillow",
+          "style": "is-warning"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/text-rendering-engine",
+        "external": true
+      }
+    },
+    {
+      "title": "Server Operations Toolkit",
+      "accent": "#f7d51d",
+      "icon": "trophy",
+      "summary": "Practical operations tools for Git backups, Git remotes, MinIO workflows, cPanel DNS notes, Nginx autoindex, PHP webhooks, and safe server shutdown.",
+      "tags": [
+        {
+          "group": "Ops",
+          "label": "Shell",
+          "style": "is-warning"
+        },
+        {
+          "group": "Git",
+          "label": "Tools",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/git-backup",
+        "external": true
+      }
+    },
+    {
+      "title": "Messenger Bots & Clients",
+      "accent": "#92cc41",
+      "icon": "heart",
+      "summary": "Automation experiments for Eitaa and Bale, plus a Whisper-based voice-to-text bot for message and media workflows.",
+      "tags": [
+        {
+          "group": "Bot",
+          "label": "PHP",
+          "style": "is-success"
+        },
+        {
+          "group": "AI",
+          "label": "Whisper",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/whisper-bot",
+        "external": true
+      }
+    },
+    {
+      "title": "Persian Utility Tools",
+      "accent": "#209cee",
+      "icon": "coin",
+      "summary": "Small utility projects for Persian/RTL workflows, QR-code links, directory listing, and Python experiments inspired by Laravel data patterns.",
+      "tags": [
+        {
+          "group": "Tools",
+          "label": "HTML",
+          "style": "is-primary"
+        },
+        {
+          "group": "Data",
+          "label": "Python",
+          "style": "is-success"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/tools",
         "external": true
       }
     }
