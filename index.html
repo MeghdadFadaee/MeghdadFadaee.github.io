@@ -252,56 +252,10 @@
             <h2 class="text-2xl">Quest Log (Projects)</h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            <!-- Project 1 -->
+        <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" aria-live="polite">
             <div class="nes-container is-rounded is-dark">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="text-[#f7d51d]">Mahak API</span>
-                    <i class="nes-icon close is-small bg-red-500"></i>
-                </div>
-                <p class="text-xs h-20 text-gray-300">A high-throughput API written in Laravel. Handles over million users and 20K concurrent request.</p>
-                <div class="mt-4 mb-4">
-                        <span class="nes-badge is-icon">
-                            <span class="is-dark">PHP</span>
-                            <span class="is-warning w-24">Laravel</span>
-                        </span>
-                </div>
-                <a href="https://play.google.com/store/apps/details?id=com.dabestaniha.mahak" class="nes-btn is-primary w-full" target="_blank">Download Now</a>
+                <p class="text-xs text-gray-300">Loading quests...</p>
             </div>
-
-            <!-- Project 2 -->
-            <div class="nes-container is-rounded is-dark">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="text-[#92cc41]">Data Safety</span>
-                    <i class="nes-icon coin is-small"></i>
-                </div>
-                <p class="text-xs h-20 text-gray-300">Powerful data back up with in any SQL mirror or S3 Bucket Storage.</p>
-                <div class="mt-4 mb-4">
-                        <span class="nes-badge is-icon">
-                            <span class="is-dark">Data</span>
-                            <span class="is-success">Docker</span>
-                        </span>
-                </div>
-                <a href="#contact" class="nes-btn is-primary w-full">Start</a>
-            </div>
-
-            <!-- Project 3 -->
-            <div class="nes-container is-rounded is-dark">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="text-[#ce372b]">LMS Services</span>
-                    <i class="nes-icon heart is-small"></i>
-                </div>
-                <p class="text-xs h-20 text-gray-300">Several Learning Management System, implemented with varies frameworks.</p>
-                <div class="mt-4 mb-4">
-                        <span class="nes-badge is-icon">
-                            <span class="is-dark">Node</span>
-                            <span class="is-error">VUE</span>
-                        </span>
-                </div>
-                <a href="https://mohieddin.ir" class="nes-btn is-primary w-full">Example</a>
-            </div>
-
         </div>
     </section>
 
@@ -399,6 +353,112 @@
         p.innerText = text;
         terminalOutput.appendChild(p);
     }
+
+    // --- Project API Rendering ---
+    const projectsApiUrl = 'api/projects.json';
+    const projectGrid = document.getElementById('project-grid');
+
+    async function loadProjects() {
+        if (!projectGrid) return;
+
+        try {
+            const response = await fetch(projectsApiUrl, { headers: { 'Accept': 'application/json' } });
+            if (!response.ok) {
+                throw new Error(`Project API returned ${response.status}`);
+            }
+
+            const payload = await response.json();
+            const projects = Array.isArray(payload.projects) ? payload.projects : [];
+            renderProjects(projects);
+        } catch (error) {
+            projectGrid.innerHTML = '';
+            projectGrid.appendChild(createProjectMessage('Quest API unavailable. Try again soon.'));
+            console.error(error);
+        }
+    }
+
+    function renderProjects(projects) {
+        projectGrid.innerHTML = '';
+
+        if (projects.length === 0) {
+            projectGrid.appendChild(createProjectMessage('No quests available.'));
+            return;
+        }
+
+        projects.forEach(project => {
+            projectGrid.appendChild(createProjectCard(project));
+        });
+    }
+
+    function createProjectCard(project) {
+        const card = document.createElement('div');
+        card.className = 'nes-container is-rounded is-dark flex flex-col';
+
+        const header = document.createElement('div');
+        header.className = 'flex justify-between items-start gap-4 mb-4';
+
+        const title = document.createElement('span');
+        title.className = 'leading-relaxed';
+        title.style.color = project.accent || '#f7d51d';
+        title.textContent = project.title || 'Untitled Quest';
+
+        const icon = document.createElement('i');
+        icon.className = `nes-icon ${project.icon || 'star'} is-small ${project.iconClass || ''}`.trim();
+
+        header.append(title, icon);
+
+        const summary = document.createElement('p');
+        summary.className = 'text-xs min-h-20 text-gray-300';
+        summary.textContent = project.summary || '';
+
+        const tags = document.createElement('div');
+        tags.className = 'mt-4 mb-4 flex flex-wrap gap-2';
+        (project.tags || []).forEach(tag => {
+            tags.appendChild(createProjectBadge(tag));
+        });
+
+        const cta = document.createElement('a');
+        cta.className = 'nes-btn is-primary w-full mt-auto';
+        cta.href = project.cta?.href || '#projects';
+        cta.textContent = project.cta?.label || 'Open';
+        if (project.cta?.external) {
+            cta.target = '_blank';
+            cta.rel = 'noopener noreferrer';
+        }
+
+        card.append(header, summary, tags, cta);
+        return card;
+    }
+
+    function createProjectBadge(tag) {
+        const badge = document.createElement('span');
+        badge.className = 'nes-badge is-icon';
+
+        const group = document.createElement('span');
+        group.className = 'is-dark';
+        group.textContent = tag.group || 'Tech';
+
+        const label = document.createElement('span');
+        label.className = `${tag.style || 'is-primary'} w-24`;
+        label.textContent = tag.label || 'Stack';
+
+        badge.append(group, label);
+        return badge;
+    }
+
+    function createProjectMessage(message) {
+        const card = document.createElement('div');
+        card.className = 'nes-container is-rounded is-dark';
+
+        const text = document.createElement('p');
+        text.className = 'text-xs text-gray-300';
+        text.textContent = message;
+
+        card.appendChild(text);
+        return card;
+    }
+
+    loadProjects();
 
     // --- Contact Form Mockup ---
     function sendMessage() {

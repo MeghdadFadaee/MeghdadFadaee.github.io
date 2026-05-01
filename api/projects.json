@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-01",
+  "projects": [
+    {
+      "title": "Mahak API",
+      "accent": "#f7d51d",
+      "icon": "close",
+      "iconClass": "bg-red-500",
+      "summary": "A high-throughput API written in Laravel. Handles over million users and 20K concurrent request.",
+      "tags": [
+        {
+          "group": "PHP",
+          "label": "Laravel",
+          "style": "is-warning"
+        }
+      ],
+      "cta": {
+        "label": "Download Now",
+        "href": "https://play.google.com/store/apps/details?id=com.dabestaniha.mahak",
+        "external": true
+      }
+    },
+    {
+      "title": "Data Safety",
+      "accent": "#92cc41",
+      "icon": "coin",
+      "summary": "Powerful data back up with in any SQL mirror or S3 Bucket Storage.",
+      "tags": [
+        {
+          "group": "Data",
+          "label": "Docker",
+          "style": "is-success"
+        }
+      ],
+      "cta": {
+        "label": "Start",
+        "href": "#contact",
+        "external": false
+      }
+    },
+    {
+      "title": "LMS Services",
+      "accent": "#ce372b",
+      "icon": "heart",
+      "summary": "Several Learning Management System, implemented with varies frameworks.",
+      "tags": [
+        {
+          "group": "Node",
+          "label": "VUE",
+          "style": "is-error"
+        }
+      ],
+      "cta": {
+        "label": "Example",
+        "href": "https://mohieddin.ir",
+        "external": true
+      }
+    }
+  ]
+}
