@@ -72,6 +72,10 @@
         text-wrap: balance;
     }
 
+    .terminal-panel {
+        margin-top: 4rem !important;
+    }
+
     .project-card h3 {
         overflow-wrap: anywhere;
     }
@@ -757,6 +761,10 @@
 }
 
 @media (min-width: 768px) {
+    .terminal-panel {
+        margin-top: 6rem !important;
+    }
+
     .case-meta {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
