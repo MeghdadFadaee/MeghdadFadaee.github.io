@@ -1,15 +1,15 @@
 {
   "version": 2,
-  "updatedAt": "2026-05-01",
-  "generatedFrom": "data/github-project-scan.json",
+  "updatedAt": "2026-07-29",
+  "generatedFrom": "GitHub public repository scan",
   "scanSummary": {
-    "scannedAt": "2026-05-01T15:39:00.6052345Z",
-    "repositoryCount": 200,
+    "scannedAt": "2026-07-29T02:50:15Z",
+    "publicRepositoryCount": 67,
     "owners": [
       "MeghdadFadaee",
       "dabestaniha"
     ],
-    "note": "Portfolio entries are grouped from public and private repositories. Private repository names are intentionally not listed here."
+    "note": "Public repositories are selectively grouped into portfolio entries. Forks, small experiments, and overlapping utilities are omitted. Private repository names are intentionally not listed."
   },
   "projects": [
     {
@@ -33,6 +33,213 @@
         "label": "Contact",
         "href": "#contact",
         "external": false
+      }
+    },
+    {
+      "title": "DomainOps",
+      "accent": "#209cee",
+      "icon": "trophy",
+      "summary": "Local-first Go TUI and JSON CLI for multi-account Cloudflare DNS, TLS, and ACME certificate operations, with an encrypted vault, SQLite cache, conflict-safe mutations, audit history, and headless automation.",
+      "tags": [
+        {
+          "group": "CLI",
+          "label": "Go",
+          "style": "is-primary"
+        },
+        {
+          "group": "Ops",
+          "label": "DNS/TLS",
+          "style": "is-warning"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/domainops",
+        "external": true
+      }
+    },
+    {
+      "title": "Easy Stream",
+      "accent": "#e76e55",
+      "icon": "star",
+      "summary": "Browser-first media archive stack that scans read-only MKV libraries and produces signed CMAF/fMP4 HLS on demand, with bounded caching, worker queues, FFmpeg validation, Docker deployment, and an RTL/TV interface.",
+      "tags": [
+        {
+          "group": "Web",
+          "label": "TypeScript",
+          "style": "is-primary"
+        },
+        {
+          "group": "Media",
+          "label": "HLS",
+          "style": "is-success"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/easy-stream",
+        "external": true
+      }
+    },
+    {
+      "title": "Nyone",
+      "accent": "#ce372b",
+      "icon": "heart",
+      "summary": "Live-streaming platform built with Laravel, Inertia, React, and MediaMTX, supporting creator channels, OBS/RTMP publishing, HLS playback, follows, live chat, creator-selected VOD recording, and admin moderation.",
+      "tags": [
+        {
+          "group": "Web",
+          "label": "Laravel",
+          "style": "is-warning"
+        },
+        {
+          "group": "Stream",
+          "label": "HLS",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "Live Site",
+        "href": "https://nyone.ir/",
+        "external": true
+      }
+    },
+    {
+      "title": "Smart Warehouse Allocation",
+      "accent": "#92cc41",
+      "icon": "coin",
+      "summary": "Low-latency FastAPI and Redis microservice that deterministically selects and atomically reserves the best warehouse across inventory, cost, ETA, traffic, fleet, and SLA constraints, with metrics and load benchmarks.",
+      "tags": [
+        {
+          "group": "API",
+          "label": "Python",
+          "style": "is-success"
+        },
+        {
+          "group": "Data",
+          "label": "Redis",
+          "style": "is-error"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/ict-warehouse-allocation",
+        "external": true
+      }
+    },
+    {
+      "title": "BankFlow",
+      "accent": "#f7d51d",
+      "icon": "trophy",
+      "summary": "Laravel service for versioned loan-application workflows, running validation, fraud, guarantor, credit, and approval stages with immutable rule snapshots, auditable results, a Filament admin panel, PostgreSQL, and Pest tests.",
+      "tags": [
+        {
+          "group": "API",
+          "label": "Laravel",
+          "style": "is-warning"
+        },
+        {
+          "group": "Data",
+          "label": "Postgres",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/ict-bank-flow",
+        "external": true
+      }
+    },
+    {
+      "title": "Nginx Monitoring Stack",
+      "accent": "#ce372b",
+      "icon": "heart",
+      "summary": "Dependency-free C module exposing Linux and Nginx telemetry through dashboard, JSON, SSE, health, and Prometheus endpoints, paired with a Kotlin fleet-monitoring app with encrypted credentials, alerts, history, and widgets.",
+      "tags": [
+        {
+          "group": "Core",
+          "label": "C",
+          "style": "is-error"
+        },
+        {
+          "group": "App",
+          "label": "Kotlin",
+          "style": "is-success"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/ngx_http_monitoring_module",
+        "external": true
+      }
+    },
+    {
+      "title": "Post HUB",
+      "accent": "#209cee",
+      "icon": "coin",
+      "summary": "Mobile-first Postman-style Android client for composing requests, saving history and environments, chaining flows with captured values, inspecting responses, and running a saved flow from a home-screen widget.",
+      "tags": [
+        {
+          "group": "App",
+          "label": "Kotlin",
+          "style": "is-primary"
+        },
+        {
+          "group": "UI",
+          "label": "Compose",
+          "style": "is-success"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/post-hub",
+        "external": true
+      }
+    },
+    {
+      "title": "Nova Form Card",
+      "accent": "#f7d51d",
+      "icon": "star",
+      "summary": "Laravel Nova 5 package that turns cards into submit-capable forms using standard Nova fields, with validation, dependencies, uploads, authorization, and structured success, redirect, refresh, or error responses.",
+      "tags": [
+        {
+          "group": "PHP",
+          "label": "Laravel",
+          "style": "is-warning"
+        },
+        {
+          "group": "Admin",
+          "label": "Nova",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/nova-form-card",
+        "external": true
+      }
+    },
+    {
+      "title": "Embedd HUB",
+      "accent": "#92cc41",
+      "icon": "heart",
+      "summary": "Local-first Laravel workbench for generating, storing, searching, and comparing text embeddings with Ollama and PostgreSQL/pgvector, including model discovery, availability checks, similarity matrices, and usage tracking.",
+      "tags": [
+        {
+          "group": "AI",
+          "label": "Ollama",
+          "style": "is-success"
+        },
+        {
+          "group": "Data",
+          "label": "pgvector",
+          "style": "is-primary"
+        }
+      ],
+      "cta": {
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/embedd-hub",
+        "external": true
       }
     },
     {
@@ -131,11 +338,11 @@
       "title": "Build & DevOps Automation",
       "accent": "#f7d51d",
       "icon": "star",
-      "summary": "Automation for app builds, deployments, Gradle plugin work, Docker service configs, Dropbox Paper documentation sync, and release helpers.",
+      "summary": "Automation for application builds and releases, changed-file Laravel FTP deployments, local HTTPS PHP project routing, Gradle plugins, Docker services, documentation sync, and Git helpers.",
       "tags": [
         {
           "group": "Ops",
-          "label": "Python",
+          "label": "PHP",
           "style": "is-warning"
         },
         {
@@ -145,9 +352,9 @@
         }
       ],
       "cta": {
-        "label": "Contact",
-        "href": "#contact",
-        "external": false
+        "label": "GitHub",
+        "href": "https://github.com/MeghdadFadaee/php-dev-router",
+        "external": true
       }
     },
     {
@@ -200,22 +407,22 @@
       "title": "ISP & Telecom Clients",
       "accent": "#e76e55",
       "icon": "coin",
-      "summary": "Python clients for Iranian telecom and ISP portals, handling login/session reuse and package or service status extraction.",
+      "summary": "Cross-platform Kotlin and Rust clients for MCI, TCI, and Jahan Nama service status, with session renewal, encrypted local credentials, background refresh, widgets, desktop trays and overlays, diagnostics, and packaged releases.",
       "tags": [
         {
-          "group": "Lang",
-          "label": "Python",
-          "style": "is-error"
+          "group": "App",
+          "label": "Kotlin",
+          "style": "is-success"
         },
         {
-          "group": "API",
-          "label": "Client",
-          "style": "is-primary"
+          "group": "Desktop",
+          "label": "Rust",
+          "style": "is-error"
         }
       ],
       "cta": {
         "label": "GitHub",
-        "href": "https://github.com/MeghdadFadaee/mci-client",
+        "href": "https://github.com/MeghdadFadaee/remaining",
         "external": true
       }
     },
@@ -292,11 +499,11 @@
       "title": "Persian Utility Tools",
       "accent": "#209cee",
       "icon": "coin",
-      "summary": "Small utility projects for Persian/RTL workflows, QR-code links, directory listing, and Python experiments inspired by Laravel data patterns.",
+      "summary": "Utilities for Persian and RTL workflows, ChatGPT Markdown/PDF export, QR-code generation, directory listing, and Python data-layer experiments inspired by Laravel patterns.",
       "tags": [
         {
-          "group": "Tools",
-          "label": "HTML",
+          "group": "Docs",
+          "label": "PDF",
           "style": "is-primary"
         },
         {
@@ -307,7 +514,7 @@
       ],
       "cta": {
         "label": "GitHub",
-        "href": "https://github.com/MeghdadFadaee/tools",
+        "href": "https://github.com/MeghdadFadaee/chatgpt-share-exporter",
         "external": true
       }
     }
