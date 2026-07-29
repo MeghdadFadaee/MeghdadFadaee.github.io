@@ -19,6 +19,7 @@ assert.match(html, /<link rel="canonical" href="https:\/\/meghdadfadaee\.github\
 assert.match(html, /<meta property="og:url" content="https:\/\/meghdadfadaee\.github\.io\/">/);
 assert.match(html, /<meta name="description" content="[^"]+">/);
 assert.match(html, /<meta property="og:image" content="https:\/\/meghdadfadaee\.github\.io\/assets\/og-preview\.png">/);
+assert.match(html, /<meta name="google-site-verification" content="r7GnylOYawm7Ty0cNnZlbeQyRgX1pTOStpal1n-G9fw">/);
 assert.doesNotMatch(html, /Fadadee|meta name="keywords"|cdn\.tailwindcss\.com|Loading quests|loadProjects|projectsApiUrl|fetch\s*\(|PROJECT_CARDS/);
 assert.match(html, /<h2\b[^>]*>Player Stats<\/h2>/);
 assert.match(html, /<h3\b[^>]*>Backend Architect<\/h3>/);
