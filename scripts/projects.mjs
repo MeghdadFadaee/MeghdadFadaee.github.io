@@ -1,4 +1,6 @@
 import { readFile } from "node:fs/promises";
+import { caseStudyHref, validateProjectCaseStudies } from "./case-studies.mjs";
+import { escapeHtml } from "./text.mjs";
 
 const ALLOWED_ICONS = new Set(["star", "heart", "coin", "trophy"]);
 const ALLOWED_TAG_STYLES = new Set(["is-primary", "is-success", "is-warning", "is-error"]);
@@ -117,7 +119,7 @@ export function validateProjectsPayload(payload) {
             throw new TypeError(`${path}.cta.href must be a fragment or root-relative URL`);
         }
 
-        return {
+        const normalizedProject = {
             title,
             summary,
             accent,
@@ -125,12 +127,18 @@ export function validateProjectsPayload(payload) {
             tags,
             cta
         };
+
+        if (project.caseStudy !== undefined) {
+            normalizedProject.caseStudy = project.caseStudy;
+        }
+
+        return normalizedProject;
     });
 
-    return {
+    return validateProjectCaseStudies({
         ...payload,
         projects
-    };
+    });
 }
 
 export async function loadProjects(filePath) {
@@ -145,15 +153,6 @@ export async function loadProjects(filePath) {
     return validateProjectsPayload(payload);
 }
 
-export function escapeHtml(value) {
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-}
-
 function slugify(value) {
     const slug = value
         .normalize("NFKD")
@@ -165,6 +164,10 @@ function slugify(value) {
 }
 
 function ctaAriaLabel(project) {
+    if (project.caseStudy) {
+        return `Read the ${project.caseStudy.headline} case study`;
+    }
+
     const label = project.cta.label.toLocaleLowerCase("en-US");
 
     if (label.includes("github")) {
@@ -189,7 +192,10 @@ function ctaAriaLabel(project) {
 export function renderProjectCards(projects) {
     return projects.map((project, index) => {
         const titleId = `project-${index + 1}-${slugify(project.title)}`;
-        const externalAttributes = project.cta.external
+        const cardHref = caseStudyHref(project) ?? project.cta.href;
+        const cardLabel = project.caseStudy ? "View Quest" : project.cta.label;
+        const cardIsExternal = project.caseStudy ? false : project.cta.external;
+        const externalAttributes = cardIsExternal
             ? ' target="_blank" rel="noopener noreferrer"'
             : "";
         const badges = project.tags.map((tag) => `
@@ -206,7 +212,9 @@ export function renderProjectCards(projects) {
                 <p class="text-xs min-h-20 text-gray-300 leading-7">${escapeHtml(project.summary)}</p>
                 <div class="mt-4 mb-4 flex flex-wrap gap-2" aria-label="Technology tags">${badges}
                 </div>
-                <a class="nes-btn is-primary w-full mt-auto" href="${escapeHtml(project.cta.href)}" aria-label="${escapeHtml(ctaAriaLabel(project))}"${externalAttributes}>${escapeHtml(project.cta.label)}</a>
+                <a class="nes-btn is-primary w-full mt-auto" href="${escapeHtml(cardHref)}" aria-label="${escapeHtml(ctaAriaLabel(project))}"${externalAttributes}>${escapeHtml(cardLabel)}</a>
             </article>`;
     }).join("\n");
 }
+
+export { escapeHtml };

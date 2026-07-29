@@ -13,7 +13,7 @@
   },
   "projects": [
     {
-      "title": "Mahak Backend Platform",
+      "title": "Mahak API Platform",
       "accent": "#f7d51d",
       "icon": "trophy",
       "summary": "Service platform for Dabestaniha apps: auth, shop, LMS, campaigns, game maps, payments, notifications, API documentation, and admin workflows.",
@@ -33,6 +33,129 @@
         "label": "Contact",
         "href": "#contact",
         "external": false
+      },
+      "caseStudy": {
+        "slug": "mahak-api-platform",
+        "headline": "Mahak API Platform",
+        "seoTitle": "Mahak API Platform: Multi-Tenant Backend Case Study",
+        "metaDescription": "How I helped refactor and scale Dabestaniha's shared multi-tenant platform for 24 apps, 4M+ verified accounts, and recurring 100K RPS peaks.",
+        "kicker": "Flagship Quest",
+        "intro": "As CTO of Dabestaniha, I refactored and scaled a shared multi-tenant platform powering 24 active applications and more than 4 million verified accounts. Aggregate traffic is typically around 10K RPS, with recurring production peaks reaching 100K completed requests per second.",
+        "role": "Backend Developer (2023–2025); CTO, backend and DevOps focus (2025–present)",
+        "timeline": "2023–present",
+        "status": "Production · 24 active apps",
+        "metrics": [
+          {
+            "value": "24",
+            "label": "Active apps",
+            "detail": "One shared platform serves independently branded Android, web, and iOS products."
+          },
+          {
+            "value": "4M+",
+            "label": "Verified accounts",
+            "detail": "Verified accounts across the ecosystem; the same person may be counted separately in more than one app."
+          },
+          {
+            "value": "~10K",
+            "label": "Typical RPS",
+            "detail": "Normal aggregate completed-request rate measured across the active applications."
+          },
+          {
+            "value": "100K",
+            "label": "Peak RPS",
+            "detail": "Recurring aggregate production peaks observed in Grafana, Prometheus, and Metabase."
+          },
+          {
+            "value": "12",
+            "label": "Tech team",
+            "detail": "CTO leadership within a 12-person technology team and a 50+ person organization."
+          }
+        ],
+        "mission": [
+          "Dabestaniha needed one platform flexible enough to power a portfolio of education, content, commerce, campaign, and game experiences without operating a separate backend for every brand.",
+          "Each application connects with its own app identity and key. The shared system resolves tenant context, applies app-specific behavior and permissions, and scales horizontally according to each owner's demand."
+        ],
+        "architecture": [
+          {
+            "label": "Product Clients",
+            "detail": "Kotlin and Compose Android apps, web clients, and iOS apps connect through stable tenant-aware APIs."
+          },
+          {
+            "label": "Edge & Runtime",
+            "detail": "Nginx distributes traffic across containerized PHP-FPM services that can scale horizontally by workload."
+          },
+          {
+            "label": "Shared Application Layer",
+            "detail": "Fat-Free and Laravel APIs coexist behind one entry point, with Laravel Nova providing tenant-aware administration."
+          },
+          {
+            "label": "Data & Async Work",
+            "detail": "MySQL, PostgreSQL, Redis, JWT, and Laravel queues support shared data, caching, sessions, and background jobs."
+          },
+          {
+            "label": "Delivery & Visibility",
+            "detail": "MinIO, Gitea Actions, Grafana, Prometheus, and Metabase cover media, deployment, health, and product insight."
+          }
+        ],
+        "battlePlan": [
+          "Refactored the shared backend while keeping existing app contracts stable, improving tenancy, database access, caching, authentication, and queue behavior.",
+          "Evolved legacy Fat-Free routes alongside Laravel APIs through a shared entry point, allowing incremental migration instead of a disruptive rewrite.",
+          "Redesigned the runtime around Nginx, PHP-FPM, Docker, Redis, queues, and horizontal scaling for predictable behavior during heavy demand.",
+          "Built test-gated delivery with staged deployments, runtime preservation, cache rebuilding, queue restarts, and OPcache resets through self-hosted Gitea Actions.",
+          "Expanded operational visibility across infrastructure and product data with health checks, Grafana, Prometheus, and Metabase."
+        ],
+        "bossFight": [
+          "The hardest constraint was evolving a live shared platform while dozens of branded clients depended on the same contracts. Changes had to improve throughput and operability without forcing a coordinated rewrite of every app.",
+          "My work built on existing core systems: I improved tenancy, queries, Redis, JWT, and workers, then introduced or redesigned containerized horizontal scaling, object storage, observability, analytics, and CI/CD."
+        ],
+        "rewards": [
+          "A single maintainable platform now powers 24 active applications across multiple product categories.",
+          "The platform sustains typical aggregate traffic around 10K RPS and repeatedly handles production peaks of 100K completed RPS.",
+          "More than 4 million verified accounts are served across the app ecosystem.",
+          "The delivery and monitoring systems give the team safer releases, clearer health signals, and faster operational feedback."
+        ],
+        "stack": [
+          "Fat-Free",
+          "Laravel",
+          "Laravel Nova",
+          "Nginx",
+          "PHP-FPM",
+          "Docker",
+          "MySQL",
+          "PostgreSQL",
+          "Redis",
+          "Laravel Queues",
+          "MinIO",
+          "Grafana",
+          "Prometheus",
+          "Metabase",
+          "Gitea Actions",
+          "Kotlin",
+          "Jetpack Compose"
+        ],
+        "links": [
+          {
+            "label": "Mahak on Cafe Bazaar",
+            "href": "https://cafebazaar.ir/app/com.dabestaniha.mahak"
+          },
+          {
+            "label": "Mahak on Google Play",
+            "href": "https://play.google.com/store/apps/details?id=com.dabestaniha.mahak"
+          },
+          {
+            "label": "Jadooye Zaban",
+            "href": "https://cafebazaar.ir/app/ir.mehdishabani"
+          },
+          {
+            "label": "Yadovin",
+            "href": "https://cafebazaar.ir/app/ir.yadgirinovin"
+          },
+          {
+            "label": "Naba",
+            "href": "https://cafebazaar.ir/app/com.naba14"
+          }
+        ],
+        "sourceNote": "Scale figures are internal production measurements across the platform. Verified-account totals may overlap when the same person uses multiple apps. Private source repositories and operational dashboards are intentionally not linked."
       }
     },
     {
@@ -56,6 +179,86 @@
         "label": "GitHub",
         "href": "https://github.com/MeghdadFadaee/domainops",
         "external": true
+      },
+      "caseStudy": {
+        "slug": "domainops",
+        "headline": "DomainOps",
+        "seoTitle": "DomainOps: Secure DNS, TLS and ACME Operations in Go",
+        "metaDescription": "A solo-built, local-first Go TUI and JSON CLI for safer Cloudflare DNS, TLS, ACME certificate, audit, and recovery workflows.",
+        "kicker": "Operations Quest",
+        "intro": "DomainOps brings multi-account DNS and certificate operations into one local-first terminal workspace. It combines an interactive TUI with a machine-readable JSON CLI while keeping credentials encrypted and risky mutations deliberate.",
+        "role": "Solo developer · product, architecture, Go implementation, security, and release workflow",
+        "timeline": "2026",
+        "status": "Public pre-release",
+        "metrics": [
+          {
+            "value": "2",
+            "label": "Interfaces",
+            "detail": "An interactive terminal UI for operators and a JSON CLI for headless automation."
+          },
+          {
+            "value": "Local",
+            "label": "Control plane",
+            "detail": "SQLite state and an encrypted credential vault remain on the operator's machine."
+          },
+          {
+            "value": "Solo",
+            "label": "Ownership",
+            "detail": "Designed and implemented independently from product concept through release packaging."
+          }
+        ],
+        "mission": [
+          "Routine DNS and certificate work becomes risky when operators switch between accounts, environments, provider dashboards, and partially completed ACME challenges.",
+          "The goal was a focused operations console that makes current state visible, records mutations, and provides recovery context without becoming another hosted control plane."
+        ],
+        "architecture": [
+          {
+            "label": "TUI & JSON CLI",
+            "detail": "Human operators and automation share the same validated application services and predictable results."
+          },
+          {
+            "label": "Operations Core",
+            "detail": "Cloudflare DNS, TLS policy, certificate, conflict, confirmation, and recovery workflows live in one Go domain layer."
+          },
+          {
+            "label": "Local State",
+            "detail": "SQLite caches operational context and audit history while secrets remain protected in an encrypted vault."
+          },
+          {
+            "label": "External Providers",
+            "detail": "Cloudflare and isolated ACME staging or production environments are accessed through explicit adapters."
+          }
+        ],
+        "battlePlan": [
+          "Re-fetch remote state before mutations and fail closed when the live record no longer matches the operator's view.",
+          "Separate staging and production ACME directories so certificate tests cannot accidentally consume production limits.",
+          "Journal DNS-01 challenge work, keep immutable certificate versions, and require confirmations for destructive operations.",
+          "Bound concurrent provider calls and expose structured JSON results for reliable scripting."
+        ],
+        "bossFight": [
+          "The central challenge was balancing speed with safety. DNS and certificate tools must support automation, but stale state, hidden defaults, or an interrupted challenge can create an outage far faster than a manual dashboard."
+        ],
+        "rewards": [
+          "One consistent workflow now covers multiple Cloudflare accounts, zones, DNS records, TLS settings, and ACME certificates.",
+          "Operators retain local custody of credentials plus an audit and recovery trail for consequential changes.",
+          "The same core supports comfortable interactive use and deterministic headless automation."
+        ],
+        "stack": [
+          "Go",
+          "Terminal UI",
+          "JSON CLI",
+          "SQLite",
+          "Cloudflare API",
+          "ACME",
+          "Encrypted Vault"
+        ],
+        "links": [
+          {
+            "label": "View Source on GitHub",
+            "href": "https://github.com/MeghdadFadaee/domainops"
+          }
+        ],
+        "sourceNote": "Capabilities are documented from the public repository. DomainOps is presented as a pre-release tool, not as a production-proven service."
       }
     },
     {
@@ -79,6 +282,95 @@
         "label": "GitHub",
         "href": "https://github.com/MeghdadFadaee/easy-stream",
         "external": true
+      },
+      "caseStudy": {
+        "slug": "easy-stream",
+        "headline": "Easy Stream",
+        "seoTitle": "Easy Stream: On-Demand CMAF HLS Media Architecture",
+        "metaDescription": "A solo-built media stack that converts read-only MKV archives into signed, on-demand CMAF HLS with bounded caching and queued FFmpeg workers.",
+        "kicker": "Media Quest",
+        "intro": "Easy Stream turns an existing read-only MKV archive into a browser-first streaming library. It generates validated CMAF and fragmented-MP4 HLS only when requested, while keeping source media isolated from disposable cache and durable derived outputs.",
+        "role": "Solo developer · product, architecture, backend, frontend, media pipeline, and deployment",
+        "timeline": "2026",
+        "status": "Functional v1",
+        "metrics": [
+          {
+            "value": "MKV → HLS",
+            "label": "Media path",
+            "detail": "Archived source files become browser-compatible CMAF and fragmented-MP4 HLS on demand."
+          },
+          {
+            "value": "Read-only",
+            "label": "Source archive",
+            "detail": "The transcoding pipeline never mutates the original media library."
+          },
+          {
+            "value": "Solo",
+            "label": "Ownership",
+            "detail": "Designed and implemented independently across the application and streaming stack."
+          }
+        ],
+        "mission": [
+          "Large MKV archives are durable and convenient for storage, but they are not a reliable delivery format for browsers, televisions, or mobile clients.",
+          "The system needed to expose a polished library without pre-transcoding everything, modifying source files, or allowing expensive FFmpeg work to grow without limits."
+        ],
+        "architecture": [
+          {
+            "label": "Vue Library",
+            "detail": "A browser and TV-oriented interface provides discovery, playback, preferences, and local resume state."
+          },
+          {
+            "label": "Fastify API",
+            "detail": "The TypeScript API manages catalog data, playback authorization, signed access, and requested quality."
+          },
+          {
+            "label": "Redis & BullMQ",
+            "detail": "Bounded queues coordinate media work, deduplicate requests, and keep expensive jobs away from web processes."
+          },
+          {
+            "label": "FFmpeg Workers",
+            "detail": "Workers probe inputs, stream-copy compatible media, transcode when necessary, and validate generated HLS."
+          },
+          {
+            "label": "Nginx Gateway",
+            "detail": "Signed cookies protect media delivery while separate mounts isolate source, cache, and durable outputs."
+          }
+        ],
+        "battlePlan": [
+          "Mount the archive read-only and treat generated media as replaceable artifacts with explicit ownership and retention rules.",
+          "Prefer stream copying when codecs are compatible, then use controlled transcoding only when playback requires it.",
+          "Publish immutable, validated output generations so viewers never receive partially written playlists or segments.",
+          "Keep disposable cache separate from durable derived media and make quality selection an explicit client decision.",
+          "Store personal playback preferences and resume points locally rather than requiring an account for the showcase experience."
+        ],
+        "bossFight": [
+          "Media jobs are heavy, long-running, and failure-prone. The design had to prevent one popular title or malformed source from exhausting workers, corrupting shared output, or changing the archival copy."
+        ],
+        "rewards": [
+          "Existing MKV libraries can be browsed and streamed without an up-front full-library conversion.",
+          "The source archive remains protected while generated output can be validated, versioned, expired, and rebuilt.",
+          "Web serving, orchestration, transcoding, and storage have clear boundaries that can scale independently."
+        ],
+        "stack": [
+          "TypeScript",
+          "Vue",
+          "Vite",
+          "Fastify",
+          "PostgreSQL",
+          "Redis",
+          "BullMQ",
+          "FFmpeg",
+          "Nginx",
+          "Docker",
+          "CMAF HLS"
+        ],
+        "links": [
+          {
+            "label": "View Source on GitHub",
+            "href": "https://github.com/MeghdadFadaee/easy-stream"
+          }
+        ],
+        "sourceNote": "Capabilities describe the public functional v1 repository. Performance objectives in the project documentation are design targets, not claimed production results."
       }
     },
     {
@@ -102,6 +394,96 @@
         "label": "Live Site",
         "href": "https://nyone.ir/",
         "external": true
+      },
+      "caseStudy": {
+        "slug": "nyone",
+        "headline": "Nyone",
+        "seoTitle": "Nyone: Laravel Live Streaming Platform Case Study",
+        "metaDescription": "A solo-built Laravel, React, and MediaMTX platform for OBS publishing, low-latency HLS playback, live chat, creator channels, and VOD.",
+        "kicker": "Live Quest",
+        "intro": "Nyone is a live-streaming product where creators publish from OBS, viewers watch through HLS, and both sides meet through channels, follows, chat, moderation, and creator-controlled recordings.",
+        "role": "Solo developer · product, backend, frontend, streaming infrastructure, and deployment",
+        "timeline": "2026–present",
+        "status": "Live at nyone.ir",
+        "metrics": [
+          {
+            "value": "RTMP → HLS",
+            "label": "Live pipeline",
+            "detail": "Creators publish from OBS while browsers receive compatible adaptive streaming."
+          },
+          {
+            "value": "Live + VOD",
+            "label": "Creator formats",
+            "detail": "Channels combine live sessions with creator-selected recorded playback."
+          },
+          {
+            "value": "Solo",
+            "label": "Ownership",
+            "detail": "Designed, built, and operated independently across product and streaming layers."
+          }
+        ],
+        "mission": [
+          "The goal was to build a complete creator experience rather than a player demo: secure publishing, discoverable channels, viewer identity, social feedback, moderation, and optional recordings all had to work together.",
+          "The product also needed a clean boundary between the user-facing Laravel application and the private streaming control plane."
+        ],
+        "architecture": [
+          {
+            "label": "Creator & Viewer UI",
+            "detail": "React, Inertia, TypeScript, Tailwind, and Radix power channels, discovery, chat, follows, playback, and admin experiences."
+          },
+          {
+            "label": "Laravel Platform",
+            "detail": "Laravel and Fortify handle accounts, channels, authorization, moderation, signed viewer identities, and product data."
+          },
+          {
+            "label": "MediaMTX",
+            "detail": "A private streaming plane accepts OBS over RTMP, serves HLS, emits lifecycle hooks, and records selected sessions."
+          },
+          {
+            "label": "State & Presence",
+            "detail": "PostgreSQL stores durable product state while Redis synchronizes viewer sessions and ephemeral activity."
+          }
+        ],
+        "battlePlan": [
+          "Use OBS and RTMP for dependable creator ingest, then deliver HLS that works in standard browsers.",
+          "Sign viewer identities so streaming and application events can be correlated without exposing the private control API.",
+          "Deduplicate repeated HLS requests into viewer sessions instead of inflating presence with every playlist or segment fetch.",
+          "Record only when a creator chooses it, keeping storage policy aligned with product intent.",
+          "Keep MediaMTX control endpoints private and drive lifecycle changes through validated application hooks."
+        ],
+        "bossFight": [
+          "Streaming protocols create many short requests for one human viewing session. Turning that noisy transport activity into trustworthy presence, chat context, and creator feedback required explicit session semantics."
+        ],
+        "rewards": [
+          "Creators can move from channel setup to OBS publishing, live interaction, and selected VOD in one product.",
+          "Viewers receive browser-compatible playback plus follows, chat, discovery, and account-aware experiences.",
+          "The application and media planes can evolve independently behind a small, controlled integration surface."
+        ],
+        "stack": [
+          "Laravel 13",
+          "Fortify",
+          "Inertia",
+          "React 19",
+          "TypeScript",
+          "Tailwind CSS",
+          "Radix UI",
+          "MediaMTX",
+          "RTMP",
+          "HLS",
+          "PostgreSQL",
+          "Redis"
+        ],
+        "links": [
+          {
+            "label": "Open Nyone",
+            "href": "https://nyone.ir/"
+          },
+          {
+            "label": "View Source on GitHub",
+            "href": "https://github.com/MeghdadFadaee/nyone"
+          }
+        ],
+        "sourceNote": "The live product and public source repository support this case study. No public audience or traffic scale is claimed."
       }
     },
     {
@@ -125,6 +507,98 @@
         "label": "GitHub",
         "href": "https://github.com/MeghdadFadaee/ict-warehouse-allocation",
         "external": true
+      },
+      "caseStudy": {
+        "slug": "smart-warehouse-allocation",
+        "headline": "Smart Warehouse Allocation",
+        "seoTitle": "Smart Warehouse Allocation: FastAPI and Redis Case Study",
+        "metaDescription": "A solo-built FastAPI and Redis service for deterministic warehouse ranking and atomic multi-SKU inventory reservations under concurrency.",
+        "kicker": "Allocation Quest",
+        "intro": "Smart Warehouse Allocation is a stateless decision service that ranks eligible warehouses across inventory, cost, ETA, traffic, fleet, and SLA constraints, then reserves every SKU atomically in Redis.",
+        "role": "Solo developer · service design, allocation algorithm, concurrency model, observability, and deployment",
+        "timeline": "2026",
+        "status": "Public reference implementation",
+        "metrics": [
+          {
+            "value": "Atomic",
+            "label": "Multi-SKU reserve",
+            "detail": "A Lua transaction either reserves the complete order at one warehouse or changes nothing."
+          },
+          {
+            "value": "O(W×S)",
+            "label": "Decision path",
+            "detail": "The ranking cost scales with candidate warehouses and requested SKUs."
+          },
+          {
+            "value": "500.7",
+            "label": "Reference RPS",
+            "detail": "Local single-process benchmark with in-memory data, 33 warehouses, and concurrency 25."
+          },
+          {
+            "value": "124.6ms",
+            "label": "Reference p95",
+            "detail": "Hardware-specific local benchmark result; not a production SLA."
+          }
+        ],
+        "mission": [
+          "Choosing a warehouse is more than finding stock. The decision must be reproducible, explainable, and safe when many orders compete for the same inventory at the same time.",
+          "The service keeps ranking independent from reservation, rejects ambiguous inputs, and deliberately avoids split orders so downstream fulfillment receives one clear result."
+        ],
+        "architecture": [
+          {
+            "label": "FastAPI Contract",
+            "detail": "Strict request models expose health, allocation, Prometheus metrics, and OpenAPI documentation."
+          },
+          {
+            "label": "Ranking Engine",
+            "detail": "Deterministic scoring filters candidates and orders them across stock, cost, ETA, traffic, fleet, and SLA factors."
+          },
+          {
+            "label": "Redis Projection",
+            "detail": "Pipelined reads provide the hot inventory and operating-state view used for low-latency decisions."
+          },
+          {
+            "label": "Lua Reservation",
+            "detail": "The highest-ranked candidate is reserved atomically, with ordered fallback when concurrency invalidates a choice."
+          },
+          {
+            "label": "Kubernetes Runtime",
+            "detail": "Probes, metrics, horizontal scaling configuration, and blue-green workflow support deployment."
+          }
+        ],
+        "battlePlan": [
+          "Separate pure deterministic ranking from side effects so decisions can be tested and explained.",
+          "Pipeline Redis reads to reduce round trips, then execute the all-SKU stock check and decrement in one Lua operation.",
+          "Retry candidates in ranked order when another request wins inventory between the read and reservation steps.",
+          "Keep routing and business orchestration outside the service, with outbox, CDC, and saga patterns documented as integration guidance.",
+          "Expose Prometheus metrics, health probes, OpenAPI contracts, and deployment examples alongside the algorithm."
+        ],
+        "bossFight": [
+          "The race between reading inventory and reserving it is the critical failure mode. A correct ranking is worthless if concurrent orders can oversell a SKU or leave half an order reserved."
+        ],
+        "rewards": [
+          "Allocation remains deterministic and independently testable while the final inventory mutation is atomic.",
+          "Ranked fallback preserves the original business priorities when the first candidate loses a concurrency race.",
+          "The reference implementation includes the operational contracts needed to observe and deploy the service."
+        ],
+        "stack": [
+          "Python",
+          "FastAPI",
+          "Pydantic",
+          "Redis",
+          "Lua",
+          "Prometheus",
+          "OpenAPI",
+          "Docker",
+          "Kubernetes"
+        ],
+        "links": [
+          {
+            "label": "View Source on GitHub",
+            "href": "https://github.com/MeghdadFadaee/ict-warehouse-allocation"
+          }
+        ],
+        "sourceNote": "The 500.7 RPS and 124.6 ms p95 figures are a repository-documented local reference run, not a production SLA; results depend on hardware and workload."
       }
     },
     {
@@ -171,6 +645,98 @@
         "label": "GitHub",
         "href": "https://github.com/MeghdadFadaee/ngx_http_monitoring_module",
         "external": true
+      },
+      "caseStudy": {
+        "slug": "nginx-monitoring-stack",
+        "headline": "Nginx Monitoring Stack",
+        "seoTitle": "Nginx Monitoring Stack: C Module and Android Fleet App",
+        "metaDescription": "A solo-built Nginx monitoring module in C and Kotlin Android fleet client for bounded telemetry, alerts, history, health, SSE, and Prometheus.",
+        "kicker": "Observability Quest",
+        "intro": "This monitoring stack pairs a dependency-free Nginx module written in C with a Kotlin and Compose Android client. Together they expose bounded server telemetry and turn it into encrypted, resilient fleet monitoring, history, alerts, and widgets.",
+        "role": "Solo developer · Nginx module, telemetry model, Android client, security, packaging, and releases",
+        "timeline": "2025–present",
+        "status": "Public source",
+        "metrics": [
+          {
+            "value": "2",
+            "label": "Connected products",
+            "detail": "A native Nginx telemetry module and a dedicated Android fleet-monitoring client."
+          },
+          {
+            "value": "C + Kotlin",
+            "label": "Core languages",
+            "detail": "Low-level server collection meets a modern Compose mobile experience."
+          },
+          {
+            "value": "Bounded",
+            "label": "Telemetry state",
+            "detail": "Top-N series, histories, and cardinality are explicitly capped inside the module."
+          }
+        ],
+        "mission": [
+          "The project began with a practical question: how can an operator inspect Linux and Nginx health directly from the server without adding a heavy runtime, then carry the same signal into a useful mobile fleet view?",
+          "Both halves needed conservative resource use, secure remote access, and graceful behavior when a server is only reachable through a local network path."
+        ],
+        "architecture": [
+          {
+            "label": "Nginx Timers",
+            "detail": "Native periodic collectors read Linux process and system signals outside individual request paths."
+          },
+          {
+            "label": "Shared Telemetry",
+            "detail": "Shared memory, atomic counters, bounded top-N values, and history buffers retain a controlled working set."
+          },
+          {
+            "label": "Monitoring Endpoints",
+            "detail": "Dashboard, JSON, health, SSE, and Prometheus endpoints expose the same operational model."
+          },
+          {
+            "label": "Secure Android Client",
+            "detail": "Kotlin, Compose, encrypted credentials, SQLite history, alerts, background refresh, and widgets provide fleet access."
+          },
+          {
+            "label": "Network Fallback",
+            "detail": "The client can retry a configured local address while preserving the original hostname for TLS SNI validation."
+          }
+        ],
+        "battlePlan": [
+          "Collect expensive system data on timers rather than repeating filesystem work for every dashboard or API request.",
+          "Use shared memory and bounded series to keep module memory and Prometheus cardinality predictable.",
+          "Protect endpoints with ACLs, authentication, tokens, CORS rules, and rate limits appropriate to each deployment.",
+          "Package builds against exact distribution and Nginx ABIs instead of assuming a generic binary will load safely.",
+          "Encrypt client credentials, persist local history, refresh in the background, and preserve TLS identity during LAN fallback."
+        ],
+        "bossFight": [
+          "Native Nginx code runs inside a critical server process: leaks, unbounded labels, blocking collection, or an ABI mismatch can turn monitoring into the outage. The module therefore favors small dependencies, bounded state, and explicit compatibility."
+        ],
+        "rewards": [
+          "Operators can access one telemetry model through a local dashboard, JSON, health checks, live SSE updates, or Prometheus.",
+          "The mobile client turns individual endpoints into a practical server fleet with alerts, history, secure credentials, and widgets.",
+          "LAN fallback improves reachability without weakening hostname-based TLS verification."
+        ],
+        "stack": [
+          "C",
+          "Nginx Module API",
+          "Linux /proc",
+          "Shared Memory",
+          "Prometheus",
+          "Server-Sent Events",
+          "Kotlin",
+          "Jetpack Compose",
+          "SQLite",
+          "Android Widgets"
+        ],
+        "links": [
+          {
+            "label": "View Nginx Module",
+            "href": "https://github.com/MeghdadFadaee/ngx_http_monitoring_module"
+          },
+          {
+            "label": "View Android Client",
+            "href": "https://github.com/MeghdadFadaee/NGX-http-Monitoring-Client"
+          }
+        ],
+        "sourceNote": "Capabilities are documented from the two public repositories. No fleet size, traffic volume, or production adoption metric is claimed."
       }
     },
     {

@@ -2,6 +2,7 @@
 module.exports = {
     content: [
         "./index.html",
+        "./project.html",
         "./scripts/**/*.mjs"
     ],
     theme: {
