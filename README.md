@@ -21,7 +21,7 @@ The source HTML files act as templates. During the build, Node.js reads [`api/pr
 
 - the project grid on the homepage;
 - six static case-study pages under `/projects/<slug>/`;
-- `sitemap.xml` containing the homepage and published case studies; and
+- XML and plain-text sitemaps containing the homepage and published case studies; and
 - the production stylesheet compiled from [`src/styles.css`](src/styles.css).
 
 The complete deployable site is written to `dist/`. That directory is generated, excluded from Git, and must not be edited manually.
@@ -32,7 +32,7 @@ api/projects.json
         ▼
 scripts/build.mjs ──► Homepage project cards
                   ├─► Static case-study pages
-                  ├─► sitemap.xml
+                  ├─► sitemap.xml and sitemap.txt
                   └─► dist/ GitHub Pages artifact
 ```
 
@@ -119,7 +119,7 @@ The generated site includes:
 - a `ProfilePage`, `Person`, and `WebSite` graph on the homepage;
 - `TechArticle` and `BreadcrumbList` structured data on case studies;
 - a 1200×630 social preview image;
-- a generated XML sitemap; and
+- generated XML and plain-text sitemaps; and
 - a `robots.txt` file pointing search engines to the sitemap.
 
 These requirements are enforced by `npm run check` so generated pages cannot be deployed silently with missing core metadata.

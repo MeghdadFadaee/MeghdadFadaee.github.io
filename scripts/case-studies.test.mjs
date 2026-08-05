@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
     renderCaseStudyPage,
-    renderSitemap
+    renderSitemap,
+    renderTextSitemap
 } from "./case-studies.mjs";
 import {
     renderProjectCards,
@@ -172,11 +173,15 @@ test("rejects unsafe proof links and undersized SEO descriptions", () => {
 test("renders a sitemap containing only the homepage and case-study routes", () => {
     const payload = validateProjectsPayload(validPayload());
     const sitemap = renderSitemap(payload.projects, "2026-07-29");
+    const textSitemap = renderTextSitemap(payload.projects);
     const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+    const textUrls = textSitemap.trimEnd().split("\n");
 
     assert.deepEqual(urls, [
         "https://meghdadfadaee.github.io/",
         "https://meghdadfadaee.github.io/projects/safe-useful/"
     ]);
+    assert.deepEqual(textUrls, urls);
     assert.equal((sitemap.match(/<lastmod>2026-07-29<\/lastmod>/g) || []).length, 2);
+    assert.match(textSitemap, /\n$/);
 });

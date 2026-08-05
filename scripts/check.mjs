@@ -185,11 +185,17 @@ for (const project of caseProjects) {
 
 const robots = await readFile(join(dist, "robots.txt"), "utf8");
 const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
+const textSitemap = await readFile(join(dist, "sitemap.txt"), "utf8");
 assert.match(robots, /Sitemap: https:\/\/meghdadfadaee\.github\.io\/sitemap\.xml/);
+assert.match(robots, /Sitemap: https:\/\/meghdadfadaee\.github\.io\/sitemap\.txt/);
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+const textSitemapUrls = textSitemap.trimEnd().split("\n");
 assert.deepEqual(sitemapUrls, expectedSitemapUrls, "Sitemap must contain only the homepage and six case-study URLs");
+assert.deepEqual(textSitemapUrls, expectedSitemapUrls, "Text sitemap must match the XML sitemap URLs");
 assert.equal(new Set(sitemapUrls).size, sitemapUrls.length, "Sitemap URLs must be unique");
+assert.equal(new Set(textSitemapUrls).size, textSitemapUrls.length, "Text sitemap URLs must be unique");
 assert.equal((sitemap.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || []).length, expectedSitemapUrls.length);
+assert.match(textSitemap, /\n$/);
 
 for (const relativePath of [
     ".nojekyll",

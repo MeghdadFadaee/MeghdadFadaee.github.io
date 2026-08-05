@@ -1,7 +1,7 @@
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { renderCaseStudyPage, renderSitemap } from "./case-studies.mjs";
+import { renderCaseStudyPage, renderSitemap, renderTextSitemap } from "./case-studies.mjs";
 import { loadProjects, renderProjectCards } from "./projects.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -65,6 +65,11 @@ for (const project of caseStudyProjects) {
 await writeFile(
     join(outputDirectory, "sitemap.xml"),
     renderSitemap(payload.projects, payload.updatedAt),
+    "utf8"
+);
+await writeFile(
+    join(outputDirectory, "sitemap.txt"),
+    renderTextSitemap(payload.projects),
     "utf8"
 );
 

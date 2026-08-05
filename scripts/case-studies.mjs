@@ -454,13 +454,17 @@ ${renderStructuredData(project, updatedAt)}
         .replace("<!-- CASE_BODY -->", renderCaseStudyBody(project));
 }
 
-export function renderSitemap(projects, updatedAt) {
-    const urls = [
+function sitemapUrls(projects) {
+    return [
         CANONICAL_ROOT,
         ...projects
             .filter((project) => project.caseStudy)
             .map((project) => `${CANONICAL_ROOT}projects/${project.caseStudy.slug}/`)
     ];
+}
+
+export function renderSitemap(projects, updatedAt) {
+    const urls = sitemapUrls(projects);
 
     const entries = urls.map((url) => `    <url>
         <loc>${escapeXml(url)}</loc>
@@ -472,4 +476,8 @@ export function renderSitemap(projects, updatedAt) {
 ${entries}
 </urlset>
 `;
+}
+
+export function renderTextSitemap(projects) {
+    return `${sitemapUrls(projects).join("\n")}\n`;
 }
