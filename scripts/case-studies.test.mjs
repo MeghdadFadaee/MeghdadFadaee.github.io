@@ -114,7 +114,7 @@ test("renders escaped case-study HTML and script-safe structured data", () => {
         sourceNote: "Measured & verified."
     })));
     const template = "<!doctype html><html lang=\"en\"><head><!-- CASE_HEAD --><!-- CASE_SCHEMA --></head><body><!-- CASE_BODY --></body></html>";
-    const html = renderCaseStudyPage(template, payload.projects[0], "2026-07-29");
+    const html = renderCaseStudyPage(template, payload.projects[0], "2026-07-29", "https://example.com/");
 
     assert.match(html, /Safe &lt;\/script&gt;&lt;script&gt;alert\(&#39;no&#39;\)&lt;\/script&gt; Quest/);
     assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/);
@@ -130,7 +130,7 @@ test("renders escaped case-study HTML and script-safe structured data", () => {
     assert.match(schemaMatch[1], /\\u003c\/script\\u003e/);
     const schema = JSON.parse(schemaMatch[1]);
     assert.equal(schema["@graph"][0].headline, dangerousHeadline);
-    assert.equal(schema["@graph"][0].mainEntityOfPage, "https://meghdadfadaee.github.io/projects/safe-useful/");
+    assert.equal(schema["@graph"][0].mainEntityOfPage, "https://example.com/projects/safe-useful/");
 });
 
 test("rejects an unsafe case-study slug", () => {
@@ -172,14 +172,14 @@ test("rejects unsafe proof links and undersized SEO descriptions", () => {
 
 test("renders a sitemap containing only the homepage and case-study routes", () => {
     const payload = validateProjectsPayload(validPayload());
-    const sitemap = renderSitemap(payload.projects, "2026-07-29");
-    const textSitemap = renderTextSitemap(payload.projects);
+    const sitemap = renderSitemap(payload.projects, "2026-07-29", "https://example.com/");
+    const textSitemap = renderTextSitemap(payload.projects, "https://example.com/");
     const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
     const textUrls = textSitemap.trimEnd().split("\n");
 
     assert.deepEqual(urls, [
-        "https://meghdadfadaee.github.io/",
-        "https://meghdadfadaee.github.io/projects/safe-useful/"
+        "https://example.com/",
+        "https://example.com/projects/safe-useful/"
     ]);
     assert.deepEqual(textUrls, urls);
     assert.equal((sitemap.match(/<lastmod>2026-07-29<\/lastmod>/g) || []).length, 2);

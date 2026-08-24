@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://meghdadfadaee.github.io/sitemap.xml
-Sitemap: https://meghdadfadaee.github.io/sitemap.txt
+Sitemap: {{SITE_URL}}sitemap.xml
+Sitemap: {{SITE_URL}}sitemap.txt

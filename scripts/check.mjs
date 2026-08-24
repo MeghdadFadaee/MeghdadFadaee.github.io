@@ -3,10 +3,12 @@ import { access, readFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { escapeHtml } from "./text.mjs";
+import { loadSiteConfig } from "./site-config.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(projectRoot, "dist");
-const canonicalUrl = "https://meghdadfadaee.github.io/";
+const site = await loadSiteConfig(join(projectRoot, "site.config.json"));
+const canonicalUrl = site.url;
 const html = await readFile(join(dist, "index.html"), "utf8");
 const projectsSource = await readFile(join(projectRoot, "api", "projects.json"));
 const projectsBuilt = await readFile(join(dist, "api", "projects.json"));
@@ -41,12 +43,12 @@ assert.equal((html.match(/data-project-card/g) || []).length, payload.projects.l
 assert.equal((html.match(/<h1\b/g) || []).length, 1, "The page must contain exactly one h1");
 assert.match(html, /<html lang="en">/);
 assert.match(html, /<title>Meghdad Fadaee — Backend Engineer &amp; System Architect<\/title>/);
-assert.match(html, /<link rel="canonical" href="https:\/\/meghdadfadaee\.github\.io\/">/);
-assert.match(html, /<meta property="og:url" content="https:\/\/meghdadfadaee\.github\.io\/">/);
+assert.match(html, new RegExp(`<link rel="canonical" href="${escapeRegExp(canonicalUrl)}">`));
+assert.match(html, new RegExp(`<meta property="og:url" content="${escapeRegExp(canonicalUrl)}">`));
 assert.match(html, /<meta name="description" content="[^"]+">/);
-assert.match(html, /<meta property="og:image" content="https:\/\/meghdadfadaee\.github\.io\/assets\/og-preview\.png">/);
+assert.match(html, new RegExp(`<meta property="og:image" content="${escapeRegExp(`${canonicalUrl}assets/og-preview.png`)}">`));
 assert.match(html, /<meta name="google-site-verification" content="r7GnylOYawm7Ty0cNnZlbeQyRgX1pTOStpal1n-G9fw">/);
-assert.doesNotMatch(html, /Fadadee|meta name="keywords"|cdn\.tailwindcss\.com|Loading quests|loadProjects|projectsApiUrl|fetch\s*\(|PROJECT_CARDS/);
+assert.doesNotMatch(html, /Fadadee|meta name="keywords"|cdn\.tailwindcss\.com|Loading quests|loadProjects|projectsApiUrl|fetch\s*\(|PROJECT_CARDS|\{\{SITE_URL\}\}/);
 assert.match(html, /<h2\b[^>]*>Player Stats<\/h2>/);
 assert.match(html, /<h3\b[^>]*>Backend Architect<\/h3>/);
 assert.match(html, /Level 24 Engineer/);
@@ -116,7 +118,7 @@ for (const project of caseProjects) {
     assert.match(pageHtml, new RegExp(`<link rel="canonical" href="${escapeRegExp(caseUrl)}">`));
     assert.match(pageHtml, new RegExp(`<meta property="og:url" content="${escapeRegExp(caseUrl)}">`));
     assert.match(pageHtml, /<meta property="og:type" content="article">/);
-    assert.match(pageHtml, /<meta property="og:image" content="https:\/\/meghdadfadaee\.github\.io\/assets\/og-preview\.png">/);
+    assert.match(pageHtml, new RegExp(`<meta property="og:image" content="${escapeRegExp(`${canonicalUrl}assets/og-preview.png`)}">`));
     assert.match(pageHtml, /<meta name="robots" content="index, follow, max-image-preview:large">/);
     assert.match(pageHtml, /href="\/#about" class="nes-btn is-primary">Stats<\/a>/);
     assert.match(pageHtml, /href="\/#projects" class="nes-btn is-success">Quests<\/a>/);
@@ -186,8 +188,8 @@ for (const project of caseProjects) {
 const robots = await readFile(join(dist, "robots.txt"), "utf8");
 const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
 const textSitemap = await readFile(join(dist, "sitemap.txt"), "utf8");
-assert.match(robots, /Sitemap: https:\/\/meghdadfadaee\.github\.io\/sitemap\.xml/);
-assert.match(robots, /Sitemap: https:\/\/meghdadfadaee\.github\.io\/sitemap\.txt/);
+assert.match(robots, new RegExp(`Sitemap: ${escapeRegExp(`${canonicalUrl}sitemap.xml`)}`));
+assert.match(robots, new RegExp(`Sitemap: ${escapeRegExp(`${canonicalUrl}sitemap.txt`)}`));
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 const textSitemapUrls = textSitemap.trimEnd().split("\n");
 assert.deepEqual(sitemapUrls, expectedSitemapUrls, "Sitemap must contain only the homepage and six case-study URLs");
@@ -196,6 +198,7 @@ assert.equal(new Set(sitemapUrls).size, sitemapUrls.length, "Sitemap URLs must b
 assert.equal(new Set(textSitemapUrls).size, textSitemapUrls.length, "Text sitemap URLs must be unique");
 assert.equal((sitemap.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || []).length, expectedSitemapUrls.length);
 assert.match(textSitemap, /\n$/);
+assert.equal(await readFile(join(dist, "CNAME"), "utf8"), `${site.hostname}\n`);
 
 for (const relativePath of [
     ".nojekyll",
@@ -205,7 +208,8 @@ for (const relativePath of [
     "assets/og-preview.png",
     "fa/index.html",
     "favicon.ico",
-    "favicon.png"
+    "favicon.png",
+    "CNAME"
 ]) {
     await access(join(dist, relativePath));
 }

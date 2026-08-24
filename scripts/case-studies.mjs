@@ -1,7 +1,6 @@
 import { escapeHtml, escapeXml, serializeJsonForHtml } from "./text.mjs";
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const CANONICAL_ROOT = "https://meghdadfadaee.github.io/";
 const INTERNAL_PROJECT_ROOT = "/projects/";
 
 function isPlainObject(value) {
@@ -361,9 +360,9 @@ ${renderLinks(caseStudy.links)}
         </article>`;
 }
 
-function renderStructuredData(project, updatedAt) {
+function renderStructuredData(project, updatedAt, siteUrl) {
     const caseStudy = project.caseStudy;
-    const pageUrl = `${CANONICAL_ROOT}projects/${caseStudy.slug}/`;
+    const pageUrl = `${siteUrl}projects/${caseStudy.slug}/`;
 
     return serializeJsonForHtml({
         "@context": "https://schema.org",
@@ -378,9 +377,9 @@ function renderStructuredData(project, updatedAt) {
                 mainEntityOfPage: pageUrl,
                 author: {
                     "@type": "Person",
-                    "@id": `${CANONICAL_ROOT}#person`,
+                    "@id": `${siteUrl}#person`,
                     name: "Meghdad Fadaee",
-                    url: CANONICAL_ROOT
+                    url: siteUrl
                 },
                 about: {
                     "@type": "SoftwareApplication",
@@ -396,13 +395,13 @@ function renderStructuredData(project, updatedAt) {
                         "@type": "ListItem",
                         position: 1,
                         name: "Home",
-                        item: CANONICAL_ROOT
+                        item: siteUrl
                     },
                     {
                         "@type": "ListItem",
                         position: 2,
                         name: "Quest Log",
-                        item: `${CANONICAL_ROOT}#projects`
+                        item: `${siteUrl}#projects`
                     },
                     {
                         "@type": "ListItem",
@@ -416,10 +415,10 @@ function renderStructuredData(project, updatedAt) {
     });
 }
 
-export function renderCaseStudyPage(template, project, updatedAt, socialImagePath = "assets/og-preview.png") {
+export function renderCaseStudyPage(template, project, updatedAt, siteUrl, socialImagePath = "assets/og-preview.png") {
     const caseStudy = project.caseStudy;
-    const pageUrl = `${CANONICAL_ROOT}projects/${caseStudy.slug}/`;
-    const imageUrl = `${CANONICAL_ROOT}${socialImagePath}`;
+    const pageUrl = `${siteUrl}projects/${caseStudy.slug}/`;
+    const imageUrl = `${siteUrl}${socialImagePath}`;
     const head = `    <title>${escapeHtml(caseStudy.seoTitle)}</title>
     <meta name="description" content="${escapeHtml(caseStudy.metaDescription)}">
     <meta name="author" content="Meghdad Fadaee">
@@ -445,7 +444,7 @@ export function renderCaseStudyPage(template, project, updatedAt, socialImagePat
     <meta name="twitter:image" content="${escapeHtml(imageUrl)}">
     <meta name="twitter:image:alt" content="${escapeHtml(`${caseStudy.headline} case study by Meghdad Fadaee`)}">`;
     const schema = `    <script type="application/ld+json" id="case-study-schema">
-${renderStructuredData(project, updatedAt)}
+${renderStructuredData(project, updatedAt, siteUrl)}
     </script>`;
 
     return template
@@ -454,17 +453,17 @@ ${renderStructuredData(project, updatedAt)}
         .replace("<!-- CASE_BODY -->", renderCaseStudyBody(project));
 }
 
-function sitemapUrls(projects) {
+function sitemapUrls(projects, siteUrl) {
     return [
-        CANONICAL_ROOT,
+        siteUrl,
         ...projects
             .filter((project) => project.caseStudy)
-            .map((project) => `${CANONICAL_ROOT}projects/${project.caseStudy.slug}/`)
+            .map((project) => `${siteUrl}projects/${project.caseStudy.slug}/`)
     ];
 }
 
-export function renderSitemap(projects, updatedAt) {
-    const urls = sitemapUrls(projects);
+export function renderSitemap(projects, updatedAt, siteUrl) {
+    const urls = sitemapUrls(projects, siteUrl);
 
     const entries = urls.map((url) => `    <url>
         <loc>${escapeXml(url)}</loc>
@@ -478,6 +477,6 @@ ${entries}
 `;
 }
 
-export function renderTextSitemap(projects) {
-    return `${sitemapUrls(projects).join("\n")}\n`;
+export function renderTextSitemap(projects, siteUrl) {
+    return `${sitemapUrls(projects, siteUrl).join("\n")}\n`;
 }

@@ -2,7 +2,7 @@
 
 [![Build and deploy GitHub Pages](https://github.com/MeghdadFadaee/MeghdadFadaee.github.io/actions/workflows/pages.yml/badge.svg)](https://github.com/MeghdadFadaee/MeghdadFadaee.github.io/actions/workflows/pages.yml)
 
-Source code for [meghdadfadaee.github.io](https://meghdadfadaee.github.io/), the English portfolio of Meghdad Fadaee, a backend engineer and system architect. The site presents professional experience, selected projects, and six detailed engineering case studies through a game-inspired interface.
+Source code for [megh.dad](https://megh.dad/), the English portfolio of Meghdad Fadaee, a backend engineer and system architect. The site presents professional experience, selected projects, and six detailed engineering case studies through a game-inspired interface.
 
 ![Portfolio preview](assets/preview.png)
 
@@ -25,6 +25,8 @@ The source HTML files act as templates. During the build, Node.js reads [`api/pr
 - the production stylesheet compiled from [`src/styles.css`](src/styles.css).
 
 The complete deployable site is written to `dist/`. That directory is generated, excluded from Git, and must not be edited manually.
+
+The production origin is defined once in [`site.config.json`](site.config.json). The build uses it for canonical URLs, social metadata, structured data, both sitemaps, `robots.txt`, and the generated GitHub Pages `CNAME` file.
 
 ```text
 api/projects.json
@@ -99,6 +101,7 @@ The validators reject malformed entries, duplicate project titles or case-study 
 | `index.html` | English homepage template and lightweight page interactions |
 | `project.html` | Shared case-study page template |
 | `api/projects.json` | Structured project and case-study content |
+| `site.config.json` | Single source of truth for the production site URL |
 | `src/styles.css` | Tailwind entry point and custom visual styles |
 | `scripts/build.mjs` | Static-site build orchestration |
 | `scripts/projects.mjs` | Project validation and card rendering |
@@ -135,9 +138,21 @@ The [GitHub Actions workflow](.github/workflows/pages.yml) runs for pushes and p
 
 Pull requests are built and validated but are not deployed. The workflow can also be started manually from the GitHub Actions page.
 
+### Changing the domain
+
+Change only the `url` value in [`site.config.json`](site.config.json), keeping a full HTTPS origin with a trailing slash:
+
+```json
+{
+  "url": "https://example.com/"
+}
+```
+
+Run `npm run verify`, then configure the same custom domain in the GitHub Pages repository settings. The build derives the `CNAME` hostname and all public URLs automatically.
+
 ## Contact
 
-- Website: [meghdadfadaee.github.io](https://meghdadfadaee.github.io/)
+- Website: [megh.dad](https://megh.dad/)
 - GitHub: [@MeghdadFadaee](https://github.com/MeghdadFadaee)
 - Telegram: [@MeghdadFadaee](https://t.me/MeghdadFadaee)
 - Email: [MeghdadFadaee@gmail.com](mailto:MeghdadFadaee@gmail.com)
