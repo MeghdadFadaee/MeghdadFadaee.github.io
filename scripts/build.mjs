@@ -2,99 +2,45 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderCaseStudyPage, renderSitemap, renderTextSitemap } from "./case-studies.mjs";
-import { loadProjects, renderProjectCards } from "./projects.mjs";
+import { renderHomePage } from "./home.mjs";
+import { loadLocaleContent, validateLocaleSet } from "./localization.mjs";
+import { renderProjectCards } from "./projects.mjs";
 import { loadSiteConfig, renderSiteUrlTemplate } from "./site-config.mjs";
 
-const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const outputDirectory = join(projectRoot, "dist");
-const homeTemplatePath = join(projectRoot, "index.html");
-const caseStudyTemplatePath = join(projectRoot, "project.html");
-const projectDataPath = join(projectRoot, "api", "projects.json");
-const siteConfigPath = join(projectRoot, "site.config.json");
-const robotsTemplatePath = join(projectRoot, "robots.txt");
-const projectMarker = "<!-- PROJECT_CARDS -->";
-const caseStudyMarkers = [
-    "<!-- CASE_HEAD -->",
-    "<!-- CASE_SCHEMA -->",
-    "<!-- CASE_BODY -->"
-];
-
-async function copyRequiredPath(relativePath) {
-    const source = join(projectRoot, relativePath);
-    const destination = join(outputDirectory, relativePath);
-    await mkdir(dirname(destination), { recursive: true });
-    await cp(source, destination, { recursive: true });
-}
-
-const [homeTemplate, caseStudyTemplate, robotsTemplate, payload, site] = await Promise.all([
-    readFile(homeTemplatePath, "utf8"),
-    readFile(caseStudyTemplatePath, "utf8"),
-    readFile(robotsTemplatePath, "utf8"),
-    loadProjects(projectDataPath),
-    loadSiteConfig(siteConfigPath)
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const dist = join(root, "dist");
+const [homeTemplate, caseTemplate, robotsTemplate, site] = await Promise.all([
+    readFile(join(root, "index.html"), "utf8"), readFile(join(root, "project.html"), "utf8"),
+    readFile(join(root, "robots.txt"), "utf8"), loadSiteConfig(join(root, "site.config.json"))
 ]);
-
-const markerCount = homeTemplate.split(projectMarker).length - 1;
-if (markerCount !== 1) {
-    throw new Error(`Expected exactly one ${projectMarker} marker in index.html; found ${markerCount}`);
+const payloads = await Promise.all(site.locales.map((locale) => loadLocaleContent(join(root, "content", `${locale.code}.json`))));
+const localized = validateLocaleSet(site, payloads);
+for (const [template, markers] of [[homeTemplate, ["{{HTML_LANG}}", "{{HTML_DIR}}", "<!-- HOME_HEAD -->", "<!-- HOME_SCHEMA -->", "<!-- HOME_BODY -->", "<!-- HOME_SCRIPT -->"]], [caseTemplate, ["{{HTML_LANG}}", "{{HTML_DIR}}", "<!-- CASE_HEAD -->", "<!-- CASE_SCHEMA -->", "<!-- CASE_BODY -->"]]]) {
+    for (const marker of markers) if (template.split(marker).length - 1 !== 1) throw new Error(`Expected exactly one ${marker} marker`);
 }
 
-for (const marker of caseStudyMarkers) {
-    const count = caseStudyTemplate.split(marker).length - 1;
-    if (count !== 1) {
-        throw new Error(`Expected exactly one ${marker} marker in project.html; found ${count}`);
+await rm(dist, { recursive: true, force: true });
+await mkdir(dist, { recursive: true });
+let cardCount = 0, caseCount = 0;
+for (const { locale, payload } of localized) {
+    const outputRoot = locale.path ? join(dist, locale.path) : dist;
+    await mkdir(outputRoot, { recursive: true });
+    const cards = renderProjectCards(payload.projects, locale, payload.home.projects);
+    cardCount += payload.projects.length;
+    await writeFile(join(outputRoot, "index.html"), renderHomePage(homeTemplate, site, locale, payload, cards), "utf8");
+    for (const project of payload.projects.filter((item) => item.caseStudy)) {
+        const directory = join(outputRoot, "projects", project.caseStudy.slug);
+        await mkdir(directory, { recursive: true });
+        await writeFile(join(directory, "index.html"), renderCaseStudyPage(caseTemplate, project, site, locale, payload), "utf8");
+        caseCount += 1;
     }
 }
 
-const caseStudyProjects = payload.projects.filter((project) => project.caseStudy);
-if (caseStudyProjects.length !== 6) {
-    throw new Error(`Expected exactly six case studies; found ${caseStudyProjects.length}`);
+await writeFile(join(dist, "sitemap.xml"), renderSitemap(localized, site), "utf8");
+await writeFile(join(dist, "sitemap.txt"), renderTextSitemap(localized, site), "utf8");
+await writeFile(join(dist, "robots.txt"), renderSiteUrlTemplate(robotsTemplate, site.url), "utf8");
+await writeFile(join(dist, "CNAME"), `${site.hostname}\n`, "utf8");
+for (const relative of [".nojekyll", ".well-known", "assets", "favicon.ico", "favicon.png"]) {
+    const target = join(dist, relative); await mkdir(dirname(target), { recursive: true }); await cp(join(root, relative), target, { recursive: true });
 }
-
-const renderedHtml = renderSiteUrlTemplate(
-    homeTemplate.replace(projectMarker, renderProjectCards(payload.projects)),
-    site.url
-);
-
-await rm(outputDirectory, { recursive: true, force: true });
-await mkdir(outputDirectory, { recursive: true });
-await writeFile(join(outputDirectory, "index.html"), renderedHtml, "utf8");
-
-for (const project of caseStudyProjects) {
-    const pageDirectory = join(outputDirectory, "projects", project.caseStudy.slug);
-    await mkdir(pageDirectory, { recursive: true });
-    await writeFile(
-        join(pageDirectory, "index.html"),
-        renderCaseStudyPage(caseStudyTemplate, project, payload.updatedAt, site.url),
-        "utf8"
-    );
-}
-
-await writeFile(
-    join(outputDirectory, "sitemap.xml"),
-    renderSitemap(payload.projects, payload.updatedAt, site.url),
-    "utf8"
-);
-await writeFile(
-    join(outputDirectory, "sitemap.txt"),
-    renderTextSitemap(payload.projects, site.url),
-    "utf8"
-);
-await writeFile(join(outputDirectory, "robots.txt"), renderSiteUrlTemplate(robotsTemplate, site.url), "utf8");
-await writeFile(join(outputDirectory, "CNAME"), `${site.hostname}\n`, "utf8");
-
-for (const relativePath of [
-    ".nojekyll",
-    ".well-known",
-    "api",
-    "assets",
-    "fa",
-    "favicon.ico",
-    "favicon.png"
-]) {
-    await copyRequiredPath(relativePath);
-}
-
-console.log(
-    `Generated ${payload.projects.length} project cards and ${caseStudyProjects.length} case-study pages`
-);
+console.log(`Generated ${cardCount} localized project cards and ${caseCount} localized case-study pages`);

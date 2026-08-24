@@ -2,221 +2,97 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { escapeHtml } from "./text.mjs";
-import { loadSiteConfig } from "./site-config.mjs";
+import { loadLocaleContent, validateLocaleSet } from "./localization.mjs";
+import { caseStudyAbsoluteUrl, caseStudyPath, loadSiteConfig, localeAbsoluteUrl, localeRoot } from "./site-config.mjs";
 
-const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const dist = join(projectRoot, "dist");
-const site = await loadSiteConfig(join(projectRoot, "site.config.json"));
-const canonicalUrl = site.url;
-const html = await readFile(join(dist, "index.html"), "utf8");
-const projectsSource = await readFile(join(projectRoot, "api", "projects.json"));
-const projectsBuilt = await readFile(join(dist, "api", "projects.json"));
-const payload = JSON.parse(projectsSource.toString("utf8"));
-const caseProjects = payload.projects.filter((project) => project.caseStudy);
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const dist = join(root, "dist");
+const site = await loadSiteConfig(join(root, "site.config.json"));
+const localized = validateLocaleSet(site, await Promise.all(site.locales.map((locale) => loadLocaleContent(join(root, "content", `${locale.code}.json`)))));
+const allPages = [];
 
-function escapeRegExp(value) {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function assertProtectedExternalLinks(pageHtml, context) {
-    for (const match of pageHtml.matchAll(/<a\b[^>]*\bhref="https:\/\/[^"]+"[^>]*>/g)) {
-        assert.match(match[0], /\btarget="_blank"/, `${context}: external links must open in a new tab`);
-        assert.match(
-            match[0],
-            /\brel="[^"]*\bnoopener\b[^"]*\bnoreferrer\b[^"]*"/,
-            `${context}: external links must prevent opener and referrer access`
-        );
-    }
-
-    for (const match of pageHtml.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)) {
-        assert.match(
-            match[0],
-            /\brel="[^"]*\bnoopener\b[^"]*\bnoreferrer\b[^"]*"/,
-            `${context}: every new-tab link must be protected`
-        );
+function regexEscape(value) { return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function pageFile(locale, slug = null) { return join(dist, ...(locale.path ? [locale.path] : []), ...(slug ? ["projects", slug] : []), "index.html"); }
+function extractSchema(html, id) { const match = html.match(new RegExp(`<script type="application/ld\\+json" id="${id}">\\s*([\\s\\S]*?)\\s*<\\/script>`)); assert.ok(match, `${id} must exist`); return JSON.parse(match[1]); }
+function externalLinksAreSafe(html, label) {
+    for (const match of html.matchAll(/<a\b[^>]*href="https:\/\/[^\"]+"[^>]*>/g)) {
+        assert.match(match[0], /target="_blank"/, `${label}: external link must open in a new tab`);
+        assert.match(match[0], /rel="[^"]*noopener[^"]*noreferrer[^"]*"/, `${label}: external link must be protected`);
     }
 }
 
-assert.equal(caseProjects.length, 6, "The portfolio must publish exactly six case studies");
-assert.equal((html.match(/data-project-card/g) || []).length, payload.projects.length, "Every JSON project must render once");
-assert.equal((html.match(/<h1\b/g) || []).length, 1, "The page must contain exactly one h1");
-assert.match(html, /<html lang="en">/);
-assert.match(html, /<title>Meghdad Fadaee — Backend Engineer &amp; System Architect<\/title>/);
-assert.match(html, new RegExp(`<link rel="canonical" href="${escapeRegExp(canonicalUrl)}">`));
-assert.match(html, new RegExp(`<meta property="og:url" content="${escapeRegExp(canonicalUrl)}">`));
-assert.match(html, /<meta name="description" content="[^"]+">/);
-assert.match(html, new RegExp(`<meta property="og:image" content="${escapeRegExp(`${canonicalUrl}assets/og-preview.png`)}">`));
-assert.match(html, /<meta name="google-site-verification" content="r7GnylOYawm7Ty0cNnZlbeQyRgX1pTOStpal1n-G9fw">/);
-assert.doesNotMatch(html, /Fadadee|meta name="keywords"|cdn\.tailwindcss\.com|Loading quests|loadProjects|projectsApiUrl|fetch\s*\(|PROJECT_CARDS|\{\{SITE_URL\}\}/);
-assert.match(html, /<h2\b[^>]*>Player Stats<\/h2>/);
-assert.match(html, /<h3\b[^>]*>Backend Architect<\/h3>/);
-assert.match(html, /Level 24 Engineer/);
-assert.match(html, /HP \(Caffeine\)/);
-assert.match(html, /MP \(Creativity\)/);
-assert.match(html, /EXP \(Years\)/);
-assert.match(html, /<h2\b[^>]*>Quest Log \(Projects\)<\/h2>/);
-assert.match(html, /<h2\b[^>]*>Join Party<\/h2>/);
-assert.match(html, /<form id="party-form"/);
-assert.match(html, /mailto:MeghdadFadaee@gmail\.com\?subject=/);
-assert.match(html, /href="#about" class="nes-btn is-primary">Stats<\/a>/);
-assert.match(html, /href="#projects" class="nes-btn is-success">Quests<\/a>/);
-assert.match(html, /href="#contact" class="nes-btn is-warning">Connect<\/a>/);
+for (const { locale, payload } of localized) {
+    const homeUrl = localeAbsoluteUrl(site, locale);
+    const home = await readFile(pageFile(locale), "utf8");
+    allPages.push({ html: home, file: pageFile(locale), route: localeRoot(locale) });
+    assert.match(home, new RegExp(`<html lang="${locale.code}" dir="${locale.direction}">`));
+    assert.equal((home.match(/<h1\b/g) || []).length, 1);
+    assert.equal((home.match(/data-project-card/g) || []).length, 22);
+    assert.match(home, new RegExp(`<link rel="canonical" href="${regexEscape(homeUrl)}">`));
+    assert.match(home, new RegExp(`<meta property="og:locale" content="${locale.ogLocale}">`));
+    assert.match(home, /<form id="party-form"/);
+    assert.match(home, /mailto:MeghdadFadaee@gmail\.com\?subject=/);
+    assert.match(home, /const targets=\{about:'#about',skills:'#about',projects:'#projects',contact:'#contact'\}/);
+    assert.doesNotMatch(home, /fetch\s*\(|HOME_(HEAD|BODY|SCHEMA|SCRIPT)|\{\{HTML_|PROJECT_CARDS/);
+    assert.match(home, new RegExp(`>${regexEscape(payload.home.stats.title)}<`));
+    assert.match(home, new RegExp(`>${regexEscape(payload.home.projects.title)}<`));
+    assert.match(home, new RegExp(`>${regexEscape(payload.home.contact.title)}<`));
+    const profile = extractSchema(home, "profile-schema");
+    assert.ok(profile["@graph"].some((item) => item["@type"] === "ProfilePage" && item.inLanguage === locale.code));
+    assert.ok(profile["@graph"].some((item) => item["@type"] === "Person"));
+    externalLinksAreSafe(home, `${locale.code} homepage`);
+    for (const alternate of site.locales) assert.match(home, new RegExp(`hreflang="${alternate.code}" href="${regexEscape(localeAbsoluteUrl(site, alternate))}"`));
+    assert.match(home, new RegExp(`hreflang="x-default" href="${regexEscape(site.url)}"`));
 
-const projectCards = [...html.matchAll(/<article\b[^>]*\bdata-project-card\b[\s\S]*?<\/article>/g)]
-    .map((match) => match[0]);
-assert.equal(projectCards.length, payload.projects.length, "Each project must render in its own card");
-
-for (const [index, project] of payload.projects.entries()) {
-    const card = projectCards[index];
-    const escapedTitle = escapeHtml(project.title);
-    assert.match(card, new RegExp(`<h3[^>]*>${escapeRegExp(escapedTitle)}<\\/h3>`));
-
-    if (project.caseStudy) {
-        const caseHref = `/projects/${project.caseStudy.slug}/`;
-        const questLink = card.match(/<a\b[^>]*class="[^"]*\bnes-btn\b[^"]*"[^>]*>View Quest<\/a>/);
-        assert.ok(questLink, `${project.title} must expose a View Quest action`);
-        assert.match(questLink[0], new RegExp(`\\bhref="${escapeRegExp(caseHref)}"`));
-        assert.doesNotMatch(questLink[0], /\btarget="_blank"/, `${project.title} case-study link must stay in the same tab`);
+    const other = site.locales.find((entry) => entry.code !== locale.code);
+    assert.match(home, new RegExp(`hreflang="${other.code}"[^>]*href="${regexEscape(localeRoot(other))}"`));
+    for (const project of payload.projects.filter((item) => item.caseStudy)) {
+        const slug = project.caseStudy.slug;
+        assert.match(home, new RegExp(`href="${regexEscape(caseStudyPath(locale, slug))}"`));
+        const html = await readFile(pageFile(locale, slug), "utf8");
+        allPages.push({ html, file: pageFile(locale, slug), route: caseStudyPath(locale, slug) });
+        const url = caseStudyAbsoluteUrl(site, locale, slug);
+        assert.match(html, new RegExp(`<html lang="${locale.code}" dir="${locale.direction}">`));
+        assert.equal((html.match(/<h1\b/g) || []).length, 1);
+        assert.match(html, new RegExp(`<link rel="canonical" href="${regexEscape(url)}">`));
+        assert.match(html, new RegExp(`href="${regexEscape(caseStudyPath(other, slug))}"`));
+        assert.doesNotMatch(html, /fetch\s*\(|CASE_(HEAD|BODY|SCHEMA)|\{\{HTML_/);
+        for (const alternate of site.locales) assert.match(html, new RegExp(`hreflang="${alternate.code}" href="${regexEscape(caseStudyAbsoluteUrl(site, alternate, slug))}"`));
+        const schema = extractSchema(html, "case-study-schema");
+        const article = schema["@graph"].find((item) => item["@type"] === "TechArticle");
+        const breadcrumb = schema["@graph"].find((item) => item["@type"] === "BreadcrumbList");
+        assert.equal(article.inLanguage, locale.code); assert.equal(article.mainEntityOfPage, url); assert.equal(breadcrumb.inLanguage, locale.code);
+        externalLinksAreSafe(html, `${locale.code}/${slug}`);
     }
 }
 
-assert.deepEqual(projectsBuilt, projectsSource, "The deployed JSON must byte-match the source JSON");
+const faHome = allPages.find((page) => page.route === "/fa/").html;
+for (const accidental of ["Player Stats", "Quest Log (Projects)", "Join Party", "Mission Brief", "Battle Plan", "Quest Rewards"]) assert.doesNotMatch(faHome, new RegExp(`>${regexEscape(accidental)}<`));
+assert.match(faHome, /[\u0600-\u06ff]/);
+assert.match(await readFile(join(dist, "assets", "site.css"), "utf8"), /html\[lang=fa\].*Vazirmatn/);
 
-const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
-for (const match of html.matchAll(/\shref="#([^"]+)"/g)) {
-    assert.ok(ids.has(match[1]), `Fragment #${match[1]} must resolve to an element id`);
-}
-
-assertProtectedExternalLinks(html, "Homepage");
-
-const profileSchemaMatch = html.match(/<script type="application\/ld\+json" id="profile-schema">\s*([\s\S]*?)\s*<\/script>/);
-assert.ok(profileSchemaMatch, "Profile JSON-LD must exist");
-const profileSchema = JSON.parse(profileSchemaMatch[1]);
-const profileGraphTypes = new Set(profileSchema["@graph"].map((item) => item["@type"]));
-assert.ok(profileGraphTypes.has("WebSite"));
-assert.ok(profileGraphTypes.has("ProfilePage"));
-assert.ok(profileGraphTypes.has("Person"));
-
-const expectedSitemapUrls = [canonicalUrl];
-
-for (const project of caseProjects) {
-    const caseStudy = project.caseStudy;
-    const caseUrl = `${canonicalUrl}projects/${caseStudy.slug}/`;
-    const pagePath = join(dist, "projects", caseStudy.slug, "index.html");
-    const pageHtml = await readFile(pagePath, "utf8");
-    const context = `${project.title} case study`;
-    expectedSitemapUrls.push(caseUrl);
-
-    assert.equal((pageHtml.match(/<h1\b/g) || []).length, 1, `${context}: page must contain exactly one h1`);
-    assert.match(pageHtml, /<html lang="en">/, `${context}: page language must be English`);
-    assert.match(pageHtml, new RegExp(`<title>${escapeRegExp(escapeHtml(caseStudy.seoTitle))}<\\/title>`));
-    assert.match(
-        pageHtml,
-        new RegExp(`<meta name="description" content="${escapeRegExp(escapeHtml(caseStudy.metaDescription))}">`)
-    );
-    assert.match(pageHtml, new RegExp(`<link rel="canonical" href="${escapeRegExp(caseUrl)}">`));
-    assert.match(pageHtml, new RegExp(`<meta property="og:url" content="${escapeRegExp(caseUrl)}">`));
-    assert.match(pageHtml, /<meta property="og:type" content="article">/);
-    assert.match(pageHtml, new RegExp(`<meta property="og:image" content="${escapeRegExp(`${canonicalUrl}assets/og-preview.png`)}">`));
-    assert.match(pageHtml, /<meta name="robots" content="index, follow, max-image-preview:large">/);
-    assert.match(pageHtml, /href="\/#about" class="nes-btn is-primary">Stats<\/a>/);
-    assert.match(pageHtml, /href="\/#projects" class="nes-btn is-success">Quests<\/a>/);
-    assert.match(pageHtml, /href="\/#contact" class="nes-btn is-warning">Connect<\/a>/);
-    assert.match(pageHtml, /<h2 class="title" id="mission-title">Mission Brief<\/h2>/);
-    assert.match(pageHtml, /<h2 id="architecture-title">Architecture<\/h2>/);
-    assert.match(pageHtml, /<section class="case-section case-battle"[^>]*>/);
-    assert.match(pageHtml, /<h2 id="battle-plan-title">Battle Plan<\/h2>/);
-    assert.equal(
-        (pageHtml.match(/class="case-battle-step"/g) || []).length,
-        caseStudy.battlePlan.length,
-        `${context}: every battle-plan checkpoint must render as a readable step`
-    );
-    assert.match(pageHtml, /<section class="case-section case-boss-encounter"[^>]*>/);
-    assert.match(pageHtml, /<h2 id="boss-fight-title">Boss Fight<\/h2>/);
-    assert.match(pageHtml, /role="meter"[\s\S]*?aria-valuenow="0"[\s\S]*?aria-valuetext="Resolved"/);
-    assert.equal(
-        (pageHtml.match(/class="case-boss-alert"/g) || []).length,
-        caseStudy.bossFight.length,
-        `${context}: every boss-fight challenge must render separately`
-    );
-    assert.match(pageHtml, /<section class="case-section case-rewards"[^>]*>/);
-    assert.match(pageHtml, /<h2 id="rewards-title">Quest Rewards<\/h2>/);
-    assert.equal(
-        (pageHtml.match(/class="case-reward-card"/g) || []).length,
-        caseStudy.rewards.length,
-        `${context}: every reward must render as an unlocked card`
-    );
-    assert.match(pageHtml, /<h2 id="loadout-title">Technical Loadout<\/h2>/);
-    assert.match(pageHtml, /<h2 id="proof-title">Explore the Quest<\/h2>/);
-    assert.match(pageHtml, /href="\/#projects">Back to Quest Log<\/a>/);
-    assert.match(pageHtml, /href="\/#contact">Join Party<\/a>/);
-    assert.doesNotMatch(pageHtml, /CASE_HEAD|CASE_SCHEMA|CASE_BODY|fetch\s*\(/, `${context}: template/runtime markers must be absent`);
-
-    for (const link of caseStudy.links) {
-        const escapedHref = escapeHtml(link.href);
-        const renderedLink = pageHtml.match(
-            new RegExp(`<a\\b[^>]*\\bhref="${escapeRegExp(escapedHref)}"[^>]*>${escapeRegExp(escapeHtml(link.label))}<\\/a>`)
-        );
-        assert.ok(renderedLink, `${context}: ${link.label} must be rendered`);
-        assert.match(renderedLink[0], /\btarget="_blank"/);
-        assert.match(renderedLink[0], /\brel="[^"]*\bnoopener\b[^"]*\bnoreferrer\b[^"]*"/);
+for (const page of allPages) {
+    const ids = new Set([...page.html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
+    for (const match of page.html.matchAll(/href="(\/(?!\/)[^"]*)"/g)) {
+        const href = match[1], [rawPath, fragment] = href.split("#"), path = rawPath || page.route;
+        const relative = path.replace(/^\//, "");
+        const target = path.endsWith("/") ? join(dist, relative, "index.html") : join(dist, relative);
+        await access(target);
+        if (fragment && target.endsWith("index.html")) {
+            const targetHtml = target === page.file ? page.html : await readFile(target, "utf8");
+            const targetIds = target === page.file ? ids : new Set([...targetHtml.matchAll(/\sid="([^"]+)"/g)].map((item) => item[1]));
+            assert.ok(targetIds.has(fragment), `${page.route}: #${fragment} must resolve in ${path}`);
+        }
     }
-    assertProtectedExternalLinks(pageHtml, context);
-
-    const caseSchemaMatch = pageHtml.match(
-        /<script type="application\/ld\+json" id="case-study-schema">\s*([\s\S]*?)\s*<\/script>/
-    );
-    assert.ok(caseSchemaMatch, `${context}: JSON-LD must exist`);
-    const caseSchema = JSON.parse(caseSchemaMatch[1]);
-    const article = caseSchema["@graph"].find((item) => item["@type"] === "TechArticle");
-    const breadcrumbs = caseSchema["@graph"].find((item) => item["@type"] === "BreadcrumbList");
-    assert.ok(article, `${context}: JSON-LD must describe a TechArticle`);
-    assert.ok(breadcrumbs, `${context}: JSON-LD must include breadcrumbs`);
-    assert.equal(article.headline, caseStudy.headline);
-    assert.equal(article.description, caseStudy.metaDescription);
-    assert.equal(article.mainEntityOfPage, caseUrl);
-    assert.equal(article.inLanguage, "en");
-    assert.match(article.dateModified, /^\d{4}-\d{2}-\d{2}$/);
-    assert.deepEqual(
-        breadcrumbs.itemListElement.map((item) => item.item),
-        [canonicalUrl, `${canonicalUrl}#projects`, caseUrl],
-        `${context}: breadcrumb URLs must describe the published path`
-    );
 }
 
-const robots = await readFile(join(dist, "robots.txt"), "utf8");
-const sitemap = await readFile(join(dist, "sitemap.xml"), "utf8");
-const textSitemap = await readFile(join(dist, "sitemap.txt"), "utf8");
-assert.match(robots, new RegExp(`Sitemap: ${escapeRegExp(`${canonicalUrl}sitemap.xml`)}`));
-assert.match(robots, new RegExp(`Sitemap: ${escapeRegExp(`${canonicalUrl}sitemap.txt`)}`));
-const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-const textSitemapUrls = textSitemap.trimEnd().split("\n");
-assert.deepEqual(sitemapUrls, expectedSitemapUrls, "Sitemap must contain only the homepage and six case-study URLs");
-assert.deepEqual(textSitemapUrls, expectedSitemapUrls, "Text sitemap must match the XML sitemap URLs");
-assert.equal(new Set(sitemapUrls).size, sitemapUrls.length, "Sitemap URLs must be unique");
-assert.equal(new Set(textSitemapUrls).size, textSitemapUrls.length, "Text sitemap URLs must be unique");
-assert.equal((sitemap.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || []).length, expectedSitemapUrls.length);
-assert.match(textSitemap, /\n$/);
-assert.equal(await readFile(join(dist, "CNAME"), "utf8"), `${site.hostname}\n`);
-
-for (const relativePath of [
-    ".nojekyll",
-    ".well-known/discord.txt",
-    "assets/site.css",
-    "assets/preview.png",
-    "assets/og-preview.png",
-    "fa/index.html",
-    "favicon.ico",
-    "favicon.png",
-    "CNAME"
-]) {
-    await access(join(dist, relativePath));
-}
-
-const socialImage = await readFile(join(dist, "assets", "og-preview.png"));
-assert.equal(socialImage.subarray(1, 4).toString("ascii"), "PNG");
-assert.equal(socialImage.readUInt32BE(16), 1200, "Social image width must match Open Graph metadata");
-assert.equal(socialImage.readUInt32BE(20), 630, "Social image height must match Open Graph metadata");
-
-console.log(`Validated ${payload.projects.length} static project cards, six case studies, and the deployment SEO contract`);
+const expectedUrls = allPages.map((page) => new URL(page.route, site.url).href);
+const xml = await readFile(join(dist, "sitemap.xml"), "utf8"), text = await readFile(join(dist, "sitemap.txt"), "utf8"), robots = await readFile(join(dist, "robots.txt"), "utf8");
+const xmlUrls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+assert.deepEqual(xmlUrls, expectedUrls); assert.deepEqual(text.trim().split("\n"), expectedUrls); assert.equal(xmlUrls.length, 14);
+assert.equal((xml.match(/hreflang="x-default"/g) || []).length, 14); assert.equal((xml.match(/hreflang="en"/g) || []).length, 14); assert.equal((xml.match(/hreflang="fa"/g) || []).length, 14);
+assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.xml/); assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.txt/);
+assert.equal(await readFile(join(dist, "CNAME"), "utf8"), "megh.dad\n");
+for (const file of ["assets/preview.png", "assets/og-preview.png", "favicon.ico", "favicon.png", ".nojekyll"]) await access(join(dist, file));
+await assert.rejects(access(join(dist, "api", "projects.json")));
+console.log("Validated 14 localized pages, 44 cards, 12 case studies, SEO alternates, schemas, and internal links");

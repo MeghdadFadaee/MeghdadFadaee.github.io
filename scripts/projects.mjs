@@ -1,11 +1,13 @@
 import { readFile } from "node:fs/promises";
-import { caseStudyHref, validateProjectCaseStudies } from "./case-studies.mjs";
+import { validateProjectCaseStudies } from "./case-studies.mjs";
+import { caseStudyPath } from "./site-config.mjs";
 import { escapeHtml } from "./text.mjs";
 
 const ALLOWED_ICONS = new Set(["star", "heart", "coin", "trophy"]);
 const ALLOWED_TAG_STYLES = new Set(["is-primary", "is-success", "is-warning", "is-error"]);
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
 const INTERNAL_HREF = /^(#[A-Za-z][\w:.-]*|\/(?!\/)[^\u0000-\u001F\u007F]*)$/;
+const PROJECT_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function isPlainObject(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -42,7 +44,7 @@ export function validateProjectsPayload(payload) {
         throw new TypeError("Project payload must be an object");
     }
 
-    if (payload.version !== 2) {
+    if (payload.version !== 3) {
         throw new TypeError(`Unsupported project payload version: ${String(payload.version)}`);
     }
 
@@ -50,7 +52,7 @@ export function validateProjectsPayload(payload) {
         throw new TypeError("Project payload must contain at least one project");
     }
 
-    const seenTitles = new Set();
+    const seenIds = new Set();
 
     const projects = payload.projects.map((project, projectIndex) => {
         const path = `projects[${projectIndex}]`;
@@ -59,12 +61,11 @@ export function validateProjectsPayload(payload) {
             throw new TypeError(`${path} must be an object`);
         }
 
+        const id = requireString(project.id, `${path}.id`);
+        if (!PROJECT_ID.test(id)) throw new TypeError(`${path}.id must be a lowercase URL-safe ID`);
+        if (seenIds.has(id)) throw new TypeError(`${path}.id duplicates another project ID`);
+        seenIds.add(id);
         const title = requireString(project.title, `${path}.title`);
-        const titleKey = title.toLocaleLowerCase("en-US");
-        if (seenTitles.has(titleKey)) {
-            throw new TypeError(`${path}.title duplicates another project title`);
-        }
-        seenTitles.add(titleKey);
 
         const summary = requireString(project.summary, `${path}.summary`);
         const accent = requireString(project.accent, `${path}.accent`);
@@ -120,6 +121,7 @@ export function validateProjectsPayload(payload) {
         }
 
         const normalizedProject = {
+            id,
             title,
             summary,
             accent,
@@ -153,48 +155,19 @@ export async function loadProjects(filePath) {
     return validateProjectsPayload(payload);
 }
 
-function slugify(value) {
-    const slug = value
-        .normalize("NFKD")
-        .toLocaleLowerCase("en-US")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-
-    return slug || "project";
+function interpolate(pattern, values) {
+    return Object.entries(values).reduce((result, [key, value]) => result.replaceAll(`{${key}}`, value), pattern);
 }
 
-function ctaAriaLabel(project) {
-    if (project.caseStudy) {
-        return `Read the ${project.caseStudy.headline} case study`;
-    }
-
-    const label = project.cta.label.toLocaleLowerCase("en-US");
-
-    if (label.includes("github")) {
-        return `View ${project.title} source on GitHub`;
-    }
-
-    if (label.includes("play store")) {
-        return `View ${project.title} on Google Play`;
-    }
-
-    if (label.includes("contact")) {
-        return `Discuss ${project.title} with Meghdad Fadaee`;
-    }
-
-    if (label.includes("example")) {
-        return `View an example of ${project.title}`;
-    }
-
-    return `${project.cta.label}: ${project.title}`;
-}
-
-export function renderProjectCards(projects) {
+export function renderProjectCards(projects, locale, ui) {
     return projects.map((project, index) => {
-        const titleId = `project-${index + 1}-${slugify(project.title)}`;
-        const cardHref = caseStudyHref(project) ?? project.cta.href;
-        const cardLabel = project.caseStudy ? "View Quest" : project.cta.label;
+        const titleId = `project-${index + 1}-${project.id}`;
+        const cardHref = project.caseStudy ? caseStudyPath(locale, project.caseStudy.slug) : project.cta.href;
+        const cardLabel = project.caseStudy ? ui.viewQuest : project.cta.label;
         const cardIsExternal = project.caseStudy ? false : project.cta.external;
+        const ariaLabel = project.caseStudy
+            ? interpolate(ui.viewQuestAria, { title: project.caseStudy.headline })
+            : interpolate(ui.ctaAria, { label: project.cta.label, title: project.title });
         const externalAttributes = cardIsExternal
             ? ' target="_blank" rel="noopener noreferrer"'
             : "";
@@ -210,9 +183,9 @@ export function renderProjectCards(projects) {
                     <i class="nes-icon ${escapeHtml(project.icon)} is-small" aria-hidden="true"></i>
                 </div>
                 <p class="text-xs min-h-20 text-gray-300 leading-7">${escapeHtml(project.summary)}</p>
-                <div class="mt-4 mb-4 flex flex-wrap gap-2" aria-label="Technology tags">${badges}
+                <div class="mt-4 mb-4 flex flex-wrap gap-2" aria-label="${escapeHtml(ui.technologyTagsAria)}">${badges}
                 </div>
-                <a class="nes-btn is-primary w-full mt-auto" href="${escapeHtml(cardHref)}" aria-label="${escapeHtml(ctaAriaLabel(project))}"${externalAttributes}>${escapeHtml(cardLabel)}</a>
+                <a class="nes-btn is-primary w-full mt-auto" href="${escapeHtml(cardHref)}" aria-label="${escapeHtml(ariaLabel)}"${externalAttributes}>${escapeHtml(cardLabel)}</a>
             </article>`;
     }).join("\n");
 }

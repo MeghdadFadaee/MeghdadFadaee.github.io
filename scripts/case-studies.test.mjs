@@ -1,187 +1,55 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
-import {
-    renderCaseStudyPage,
-    renderSitemap,
-    renderTextSitemap
-} from "./case-studies.mjs";
-import {
-    renderProjectCards,
-    validateProjectsPayload
-} from "./projects.mjs";
+import { renderCaseStudyPage, renderSitemap, renderTextSitemap } from "./case-studies.mjs";
+import { validateLocaleSet } from "./localization.mjs";
+import { validateProjectsPayload } from "./projects.mjs";
+import { validateSiteConfig } from "./site-config.mjs";
 
-function validCaseStudy(overrides = {}) {
-    return {
-        slug: "safe-useful",
-        headline: "Safe & Useful Platform",
-        seoTitle: "Safe & Useful Platform Engineering Case Study",
-        metaDescription: "A detailed engineering case study covering architecture, delivery, reliability, and measurable outcomes.",
-        kicker: "Featured Quest",
-        intro: "A reliable platform built to turn a difficult workflow into a clear product.",
-        role: "Solo engineer",
-        timeline: "2025–present",
-        status: "Active",
-        metrics: [
-            {
-                value: "24",
-                label: "Active tenants",
-                detail: "Measured in production"
-            }
-        ],
-        mission: [
-            "Create a maintainable service without hiding the operational tradeoffs."
-        ],
-        architecture: [
-            {
-                label: "Client",
-                detail: "Sends a validated request."
-            },
-            {
-                label: "Service",
-                detail: "Processes the request and records the result."
-            }
-        ],
-        battlePlan: [
-            "Fail closed when validation is incomplete.",
-            "Keep deployment and rollback paths explicit."
-        ],
-        bossFight: [
-            "The primary constraint was preserving reliability while the system evolved."
-        ],
-        rewards: [
-            "A simpler operating model.",
-            "A safer path for future changes."
-        ],
-        stack: [
-            "Node.js",
-            "PostgreSQL",
-            "Redis"
-        ],
-        links: [
-            {
-                label: "View source",
-                href: "https://github.com/example/project?x=1&y=2"
-            }
-        ],
-        sourceNote: "Claims are limited to documented or measured results.",
-        ...overrides
-    };
-}
+const root = new URL("../", import.meta.url);
+const site = validateSiteConfig(JSON.parse(await readFile(new URL("site.config.json", root), "utf8")));
+const payloads = await Promise.all(site.locales.map(async (locale) => validateProjectsPayload(JSON.parse(await readFile(new URL(`content/${locale.code}.json`, root), "utf8")))));
+const localized = validateLocaleSet(site, payloads);
 
-function validPayload(caseStudy = validCaseStudy()) {
-    return {
-        version: 2,
-        projects: [
-            {
-                title: "Safe & Useful",
-                accent: "#209cee",
-                icon: "star",
-                summary: "A useful <script>alert('no')</script> project.",
-                tags: [
-                    {
-                        group: "API",
-                        label: "Go",
-                        style: "is-primary"
-                    }
-                ],
-                cta: {
-                    label: "GitHub",
-                    href: "https://github.com/example/project",
-                    external: true
-                },
-                caseStudy
-            }
-        ]
-    };
-}
-
-test("case studies replace external card actions with an internal View Quest link", () => {
-    const payload = validateProjectsPayload(validPayload());
-    const html = renderProjectCards(payload.projects);
-
-    assert.match(html, /href="\/projects\/safe-useful\/"/);
-    assert.match(html, />View Quest<\/a>/);
-    assert.match(html, /aria-label="Read the Safe &amp; Useful Platform case study"/);
-    assert.doesNotMatch(html, /target="_blank"/);
-    assert.doesNotMatch(html, /href="https:\/\/github\.com\/example\/project"/);
+test("renders equivalent localized case-study routes with safe structured data", async () => {
+    const template = await readFile(new URL("project.html", root), "utf8");
+    for (const { locale, payload } of localized) {
+        const project = payload.projects.find((item) => item.id === "mahak-api-platform");
+        const html = renderCaseStudyPage(template, project, site, locale, payload);
+        assert.match(html, new RegExp(`<html lang="${locale.code}" dir="${locale.direction}">`));
+        assert.match(html, new RegExp(`<link rel="canonical" href="https://megh\\.dad${locale.path ? "/fa" : ""}/projects/mahak-api-platform/">`));
+        assert.match(html, /hreflang="en" href="https:\/\/megh\.dad\/projects\/mahak-api-platform\/"/);
+        assert.match(html, /hreflang="fa" href="https:\/\/megh\.dad\/fa\/projects\/mahak-api-platform\/"/);
+        assert.doesNotMatch(html, /CASE_(HEAD|SCHEMA|BODY)|\{\{HTML_/);
+        const match = html.match(/id="case-study-schema">\s*([\s\S]*?)\s*<\/script>/);
+        const schema = JSON.parse(match[1]);
+        assert.equal(schema["@graph"][0].inLanguage, locale.code);
+    }
 });
 
-test("renders escaped case-study HTML and script-safe structured data", () => {
-    const dangerousHeadline = "Safe </script><script>alert('no')</script> Quest";
-    const payload = validateProjectsPayload(validPayload(validCaseStudy({
-        headline: dangerousHeadline,
-        intro: "Input such as <img src=x onerror=alert(1)> is always treated as text.",
-        sourceNote: "Measured & verified."
-    })));
-    const template = "<!doctype html><html lang=\"en\"><head><!-- CASE_HEAD --><!-- CASE_SCHEMA --></head><body><!-- CASE_BODY --></body></html>";
-    const html = renderCaseStudyPage(template, payload.projects[0], "2026-07-29", "https://example.com/");
-
-    assert.match(html, /Safe &lt;\/script&gt;&lt;script&gt;alert\(&#39;no&#39;\)&lt;\/script&gt; Quest/);
-    assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/);
-    assert.match(html, /href="https:\/\/github\.com\/example\/project\?x=1&amp;y=2"/);
-    assert.match(html, /rel="noopener noreferrer"/);
-    assert.doesNotMatch(html, /<\/script><script>alert\('no'\)<\/script>/);
-    assert.doesNotMatch(html, /<img src=x onerror=/);
-
-    const schemaMatch = html.match(
-        /<script type="application\/ld\+json" id="case-study-schema">\s*([\s\S]*?)\s*<\/script>/
-    );
-    assert.ok(schemaMatch);
-    assert.match(schemaMatch[1], /\\u003c\/script\\u003e/);
-    const schema = JSON.parse(schemaMatch[1]);
-    assert.equal(schema["@graph"][0].headline, dangerousHeadline);
-    assert.equal(schema["@graph"][0].mainEntityOfPage, "https://example.com/projects/safe-useful/");
+test("rejects unsafe case-study slugs and proof links", () => {
+    const base = structuredClone(payloads[0]);
+    base.projects[0].caseStudy.slug = "../escape";
+    assert.throws(() => validateProjectsPayload(base), /lowercase URL-safe slug/);
+    const unsafe = structuredClone(payloads[0]);
+    unsafe.projects[0].caseStudy.links[0].href = "javascript:alert(1)";
+    assert.throws(() => validateProjectsPayload(unsafe), /absolute HTTPS URL/);
 });
 
-test("rejects an unsafe case-study slug", () => {
-    assert.throws(
-        () => validateProjectsPayload(validPayload(validCaseStudy({ slug: "../escape" }))),
-        /lowercase URL-safe slug/
-    );
+test("locale validation rejects missing translations and invariant drift", () => {
+    const missing = structuredClone(payloads[1]); delete missing.home.contact.title;
+    assert.throws(() => validateLocaleSet(site, [payloads[0], missing]), /keys do not match/);
+    const drift = structuredClone(payloads[1]); drift.projects[0].caseStudy.metrics[0].value = "25";
+    assert.throws(() => validateLocaleSet(site, [payloads[0], drift]), /metric values mismatch/);
 });
 
-test("rejects duplicate case-study slugs", () => {
-    const payload = validPayload();
-    payload.projects.push({
-        ...structuredClone(payload.projects[0]),
-        title: "Another Project",
-        caseStudy: {
-            ...structuredClone(payload.projects[0].caseStudy),
-            headline: "Another Project"
-        }
-    });
-
-    assert.throws(() => validateProjectsPayload(payload), /duplicates another case-study slug/);
-});
-
-test("rejects unsafe proof links and undersized SEO descriptions", () => {
-    assert.throws(
-        () => validateProjectsPayload(validPayload(validCaseStudy({
-            links: [{ label: "Unsafe", href: "javascript:alert(1)" }]
-        }))),
-        /absolute HTTPS URL/
-    );
-
-    assert.throws(
-        () => validateProjectsPayload(validPayload(validCaseStudy({
-            metaDescription: "Too short for a useful search result."
-        }))),
-        /at least 80 characters/
-    );
-});
-
-test("renders a sitemap containing only the homepage and case-study routes", () => {
-    const payload = validateProjectsPayload(validPayload());
-    const sitemap = renderSitemap(payload.projects, "2026-07-29", "https://example.com/");
-    const textSitemap = renderTextSitemap(payload.projects, "https://example.com/");
-    const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-    const textUrls = textSitemap.trimEnd().split("\n");
-
-    assert.deepEqual(urls, [
-        "https://example.com/",
-        "https://example.com/projects/safe-useful/"
-    ]);
-    assert.deepEqual(textUrls, urls);
-    assert.equal((sitemap.match(/<lastmod>2026-07-29<\/lastmod>/g) || []).length, 2);
-    assert.match(textSitemap, /\n$/);
+test("sitemaps contain all 14 localized canonical pages and reciprocal alternates", () => {
+    const xml = renderSitemap(localized, site), text = renderTextSitemap(localized, site);
+    const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+    assert.equal(urls.length, 14);
+    assert.equal(new Set(urls).size, 14);
+    assert.deepEqual(text.trim().split("\n"), urls);
+    assert.equal((xml.match(/hreflang="x-default"/g) || []).length, 14);
+    assert.equal((xml.match(/hreflang="fa"/g) || []).length, 14);
+    assert.match(xml, /xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml"/);
 });

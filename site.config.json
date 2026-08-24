@@ -1,3 +1,20 @@
 {
-  "url": "https://megh.dad/"
+  "url": "https://megh.dad/",
+  "defaultLocale": "en",
+  "locales": [
+    {
+      "code": "en",
+      "path": "",
+      "direction": "ltr",
+      "nativeName": "English",
+      "ogLocale": "en_US"
+    },
+    {
+      "code": "fa",
+      "path": "fa",
+      "direction": "rtl",
+      "nativeName": "فارسی",
+      "ogLocale": "fa_IR"
+    }
+  ]
 }

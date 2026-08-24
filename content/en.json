@@ -1,6 +1,143 @@
 {
-  "version": 2,
+  "version": 3,
+  "locale": "en",
   "updatedAt": "2026-08-24",
+  "home": {
+    "seo": {
+      "title": "Meghdad Fadaee — Backend Engineer & System Architect",
+      "description": "Meghdad Fadaee is a Backend Engineer and System Architect building reliable platforms, APIs, and automation with Laravel, Go, Python, Docker, and SQL.",
+      "socialDescription": "Backend Engineer and System Architect building reliable platforms, APIs, and automation with Laravel, Go, Python, Docker, and SQL.",
+      "imageAlt": "Meghdad Fadaee — Backend Engineer and System Architect"
+    },
+    "profile": {
+      "name": "Meghdad Fadaee",
+      "siteName": "Meghdad Fadaee",
+      "alternateName": "Meghdad Fadaee Portfolio",
+      "jobTitle": "Backend Engineer & System Architect",
+      "description": "Backend Engineer and System Architect building reliable platforms, APIs, and automation with Laravel, Go, Python, Docker, and SQL."
+    },
+    "navigation": {
+      "skip": "Skip to main content",
+      "primaryAria": "Primary",
+      "homeAria": "Meghdad Fadaee, back to top",
+      "stats": "Stats",
+      "quests": "Quests",
+      "connect": "Connect",
+      "languageAria": "Switch language"
+    },
+    "hero": {
+      "greeting": "Hello! I build the systems behind the screens.",
+      "playerLabel": "Player 1",
+      "name": "Meghdad Fadaee",
+      "jobTitle": "Backend Engineer & System Architect"
+    },
+    "terminal": {
+      "title": "Terminal",
+      "outputAria": "Interactive terminal output",
+      "initialLines": [
+        "Last login: Today from 127.0.0.1",
+        "> initializing_backend_skills...",
+        "> loading_modules: [Go, Laravel, Python, Docker, SQL]...",
+        "> system_status: ONLINE",
+        "> type 'help' for commands."
+      ],
+      "prompt": "meghdad@github:~$",
+      "inputLabel": "Terminal command",
+      "hint": "(Type “help” for available commands)",
+      "responses": {
+        "help": "Available commands: about, skills, projects, contact, clear, whoami",
+        "whoami": "root_user // backend_specialist",
+        "about": "Navigating to #about section...",
+        "skills": "Listing loaded modules in #about...",
+        "projects": "Navigating to selected projects...",
+        "contact": "Opening transmission channel at #contact...",
+        "clear": "CLEAR_SCREEN"
+      },
+      "unknownBefore": "Command not found:",
+      "unknownAfter": "Try 'help'."
+    },
+    "stats": {
+      "title": "Player Stats",
+      "role": "Backend Architect",
+      "level": "Level 24 Engineer",
+      "hp": "HP (Caffeine)",
+      "mp": "MP (Creativity)",
+      "exp": "EXP (Years)",
+      "skillsTitle": "Special Items (Skills):",
+      "skills": [
+        "Backend: PHP, Laravel, Go, Python, Node.js",
+        "Data: PostgreSQL, Redis, MongoDB, SQL",
+        "Platform: Docker, AWS, CI/CD",
+        "Architecture: APIs, Microservices, gRPC, caching"
+      ],
+      "quote": "> \"I prefer the TUI over a GUI any day.\""
+    },
+    "projects": {
+      "title": "Quest Log (Projects)",
+      "technologyTagsAria": "Technology tags",
+      "viewQuest": "View Quest",
+      "viewQuestAria": "Read the {title} case study",
+      "ctaAria": "{label}: {title}"
+    },
+    "contact": {
+      "title": "Join Party",
+      "intro": "Ready to raid? Send me an invite.",
+      "call": "Call",
+      "email": "Email",
+      "nameLabel": "Your Name",
+      "namePlaceholder": "Player 2",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Let's build something...",
+      "submit": "SEND PACKET",
+      "note": "Opens your email app so you can review the packet before sending.",
+      "nameRequired": "Please enter your name.",
+      "messageRequired": "Please enter a message.",
+      "emailSubject": "Party invite from {name}",
+      "emailPlayer": "Player"
+    },
+    "footer": "© Meghdad Fadaee. Built with NES.css."
+  },
+  "caseUi": {
+    "skip": "Skip to main content",
+    "primaryAria": "Primary",
+    "homeAria": "Meghdad Fadaee, return home",
+    "statsNav": "Stats",
+    "questsNav": "Quests",
+    "connectNav": "Connect",
+    "languageAria": "Switch language",
+    "home": "Home",
+    "questLog": "Quest Log",
+    "breadcrumbAria": "Breadcrumb",
+    "role": "Role",
+    "timeline": "Timeline",
+    "status": "Status",
+    "highlightsAria": "Project highlights",
+    "missionBrief": "Mission Brief",
+    "systemMap": "System Map",
+    "architecture": "Architecture",
+    "strategyRoute": "Strategy Route",
+    "battlePlan": "Battle Plan",
+    "battleIntro": "The implementation path, checkpoint by checkpoint.",
+    "checkpoint": "Checkpoint {number}",
+    "criticalEncounter": "Critical Encounter",
+    "bossFight": "Boss Fight",
+    "bossHp": "Boss HP",
+    "resolved": "Resolved",
+    "bossRemainingAria": "Boss challenge remaining",
+    "achievements": "Achievements Unlocked",
+    "questRewards": "Quest Rewards",
+    "rewardsIntro": "What the quest delivered.",
+    "rewardUnlocked": "Reward {number} unlocked",
+    "specialItems": "Special Items",
+    "technicalLoadout": "Technical Loadout",
+    "proofOfWork": "Proof of Work",
+    "exploreQuest": "Explore the Quest",
+    "actionsAria": "Case study actions",
+    "backToQuestLog": "Back to Quest Log",
+    "joinParty": "Join Party",
+    "footer": "© Meghdad Fadaee. Built with NES.css.",
+    "imageAlt": "{title} case study by Meghdad Fadaee"
+  },
   "generatedFrom": "GitHub public repository scan",
   "scanSummary": {
     "scannedAt": "2026-07-29T02:50:15Z",
@@ -13,6 +150,7 @@
   },
   "projects": [
     {
+      "id": "mahak-api-platform",
       "title": "Mahak API Platform",
       "accent": "#f7d51d",
       "icon": "trophy",
@@ -159,6 +297,7 @@
       }
     },
     {
+      "id": "domainops",
       "title": "DomainOps",
       "accent": "#209cee",
       "icon": "trophy",
@@ -262,6 +401,7 @@
       }
     },
     {
+      "id": "easy-stream",
       "title": "Easy Stream",
       "accent": "#e76e55",
       "icon": "star",
@@ -374,6 +514,7 @@
       }
     },
     {
+      "id": "nyone",
       "title": "Nyone",
       "accent": "#ce372b",
       "icon": "heart",
@@ -487,6 +628,7 @@
       }
     },
     {
+      "id": "smart-warehouse-allocation",
       "title": "Smart Warehouse Allocation",
       "accent": "#92cc41",
       "icon": "coin",
@@ -602,6 +744,7 @@
       }
     },
     {
+      "id": "bankflow",
       "title": "BankFlow",
       "accent": "#f7d51d",
       "icon": "trophy",
@@ -625,6 +768,7 @@
       }
     },
     {
+      "id": "nginx-monitoring-stack",
       "title": "Nginx Monitoring Stack",
       "accent": "#ce372b",
       "icon": "heart",
@@ -740,6 +884,7 @@
       }
     },
     {
+      "id": "post-hub",
       "title": "Post HUB",
       "accent": "#209cee",
       "icon": "coin",
@@ -763,6 +908,7 @@
       }
     },
     {
+      "id": "nova-form-card",
       "title": "Nova Form Card",
       "accent": "#f7d51d",
       "icon": "star",
@@ -786,6 +932,7 @@
       }
     },
     {
+      "id": "embedd-hub",
       "title": "Embedd HUB",
       "accent": "#92cc41",
       "icon": "heart",
@@ -809,6 +956,7 @@
       }
     },
     {
+      "id": "mahak-kids-app-ecosystem",
       "title": "Mahak Kids App Ecosystem",
       "accent": "#92cc41",
       "icon": "star",
@@ -832,6 +980,7 @@
       }
     },
     {
+      "id": "learning-content-apps",
       "title": "Learning & Content Apps",
       "accent": "#209cee",
       "icon": "heart",
@@ -855,6 +1004,7 @@
       }
     },
     {
+      "id": "modular-android-architecture",
       "title": "Modular Android Architecture",
       "accent": "#e76e55",
       "icon": "coin",
@@ -878,6 +1028,7 @@
       }
     },
     {
+      "id": "quranic-train-games",
       "title": "Quranic Train & Games",
       "accent": "#ce372b",
       "icon": "trophy",
@@ -901,6 +1052,7 @@
       }
     },
     {
+      "id": "build-devops-automation",
       "title": "Build & DevOps Automation",
       "accent": "#f7d51d",
       "icon": "star",
@@ -924,6 +1076,7 @@
       }
     },
     {
+      "id": "public-web-compliance-pages",
       "title": "Public Web & Compliance Pages",
       "accent": "#92cc41",
       "icon": "coin",
@@ -947,6 +1100,7 @@
       }
     },
     {
+      "id": "fluent-chat",
       "title": "Fluent Chat",
       "accent": "#209cee",
       "icon": "heart",
@@ -970,6 +1124,7 @@
       }
     },
     {
+      "id": "isp-telecom-clients",
       "title": "ISP & Telecom Clients",
       "accent": "#e76e55",
       "icon": "coin",
@@ -993,6 +1148,7 @@
       }
     },
     {
+      "id": "text-rendering-engine",
       "title": "Text Rendering Engine",
       "accent": "#ce372b",
       "icon": "star",
@@ -1016,6 +1172,7 @@
       }
     },
     {
+      "id": "server-operations-toolkit",
       "title": "Server Operations Toolkit",
       "accent": "#f7d51d",
       "icon": "trophy",
@@ -1039,6 +1196,7 @@
       }
     },
     {
+      "id": "messenger-bots-clients",
       "title": "Messenger Bots & Clients",
       "accent": "#92cc41",
       "icon": "heart",
@@ -1062,6 +1220,7 @@
       }
     },
     {
+      "id": "persian-utility-tools",
       "title": "Persian Utility Tools",
       "accent": "#209cee",
       "icon": "coin",

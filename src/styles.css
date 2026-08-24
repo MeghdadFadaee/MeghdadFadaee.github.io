@@ -17,6 +17,23 @@
         cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' style='fill:white'><rect x='0' y='0' width='6' height='16'/><rect x='6' y='6' width='10' height='4'/></svg>"), auto;
     }
 
+    html[lang="fa"] body {
+        font-family: "Vazirmatn", sans-serif;
+        font-size: 1rem;
+    }
+
+    html[lang="fa"] h1,
+    html[lang="fa"] h2,
+    html[lang="fa"] h3,
+    html[lang="fa"] .title,
+    html[lang="fa"] .nes-btn,
+    html[lang="fa"] .section-kicker,
+    html[lang="fa"] .case-battle-label,
+    html[lang="fa"] .case-reward-status {
+        font-family: "Lalezar", "Vazirmatn", sans-serif;
+        letter-spacing: 0;
+    }
+
     :focus-visible {
         outline: 4px solid #f7d51d;
         outline-offset: 4px;
@@ -45,7 +62,7 @@
     .skip-link {
         position: fixed;
         top: 1rem;
-        left: 1rem;
+        inset-inline-start: 1rem;
         z-index: 100;
         transform: translateY(-200%);
         padding: 0.75rem 1rem;
@@ -68,6 +85,37 @@
         letter-spacing: 0.08em;
     }
 
+    [dir="rtl"] .section-kicker,
+    [dir="rtl"] .case-meta dt,
+    [dir="rtl"] .case-battle-label,
+    [dir="rtl"] .case-boss-health-label,
+    [dir="rtl"] .case-reward-status {
+        text-transform: none;
+        letter-spacing: 0;
+    }
+
+    .site-brand {
+        min-width: 0;
+        line-height: 1.8;
+    }
+
+    .nav-actions,
+    .nav-page-links {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .language-switcher {
+        padding: 0.75rem !important;
+        font-size: 0.625rem;
+        white-space: nowrap;
+    }
+
+    [lang="fa"] .language-switcher {
+        font-family: "Press Start 2P", cursive;
+    }
+
     .hero-copy {
         text-wrap: balance;
     }
@@ -80,6 +128,17 @@
         overflow-wrap: anywhere;
     }
 
+    [lang="fa"] .project-card h3 {
+        font-size: 1.125rem;
+        line-height: 1.9;
+    }
+
+    [lang="fa"] .project-card p,
+    [lang="fa"] .project-card .nes-btn {
+        font-size: 0.875rem;
+        line-height: 2;
+    }
+
     .project-card .nes-badge {
         min-width: 8rem;
     }
@@ -87,6 +146,15 @@
     #name_field,
     #msg_field {
         color: #212529;
+    }
+
+    .form-aligned,
+    .stats-bars {
+        text-align: start;
+    }
+
+    .section-title-row {
+        gap: 1rem;
     }
 
     .case-study-main {
@@ -129,8 +197,12 @@
 
     .case-breadcrumb li:not(:last-child)::after {
         content: ">";
-        margin-left: 0.5rem;
+        margin-inline-start: 0.5rem;
         color: #f7d51d;
+    }
+
+    [dir="rtl"] .case-breadcrumb li:not(:last-child)::after {
+        content: "<";
     }
 
     .case-breadcrumb a {
@@ -183,7 +255,7 @@
     .case-meta div {
         min-width: 0;
         padding: 1rem;
-        border-left: 4px solid var(--case-accent, #209cee);
+        border-inline-start: 4px solid var(--case-accent, #209cee);
         background: rgba(0, 0, 0, 0.28);
     }
 
@@ -216,7 +288,7 @@
         display: flex;
         min-height: 11rem;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: start;
         justify-content: flex-start;
     }
 
@@ -292,7 +364,8 @@
     .case-architecture-node {
         position: relative;
         min-height: 11rem;
-        padding: 1.25rem 1rem 1.25rem 4rem;
+        padding-block: 1.25rem;
+        padding-inline: 4rem 1rem;
         border: 4px solid #4b4f52;
         background: #151719;
     }
@@ -301,7 +374,7 @@
         content: "";
         position: absolute;
         bottom: -1.25rem;
-        left: 1.375rem;
+        inset-inline-start: 1.375rem;
         width: 4px;
         height: 1.25rem;
         background: var(--case-accent, #209cee);
@@ -310,7 +383,7 @@
     .case-node-index {
         position: absolute;
         top: 1rem;
-        left: 1rem;
+        inset-inline-start: 1rem;
         display: grid;
         width: 2rem;
         height: 2rem;
@@ -397,7 +470,7 @@
         position: absolute;
         top: 2.5rem;
         bottom: 2.5rem;
-        left: 1.375rem;
+        inset-inline-start: 1.375rem;
         width: 4px;
         background: repeating-linear-gradient(
             to bottom,
@@ -453,7 +526,7 @@
         content: "";
         position: absolute;
         top: 50%;
-        left: -1rem;
+        inset-inline-start: -1rem;
         width: 1rem;
         height: 4px;
         background: var(--battle-line);
@@ -656,7 +729,7 @@
     .case-links {
         display: flex;
         flex-wrap: wrap;
-        align-items: flex-start;
+        align-items: start;
         gap: 1rem;
         margin-top: 1.5rem;
     }
@@ -685,6 +758,29 @@
         margin-top: 4rem;
         padding-top: 2rem;
         border-top: 4px solid #fff;
+    }
+
+    .technical-ltr,
+    code,
+    pre {
+        direction: ltr;
+        unicode-bidi: isolate;
+    }
+
+    [lang="fa"] .case-study-main p,
+    [lang="fa"] .case-study-main li,
+    [lang="fa"] .case-study-main dd,
+    [lang="fa"] .case-study-main small {
+        font-size: 0.9375rem;
+        line-height: 2.15;
+    }
+
+    [lang="fa"] .case-study-main h2 {
+        font-size: clamp(1.35rem, 3vw, 2rem);
+    }
+
+    [lang="fa"] .case-study-main h3 {
+        font-size: 1.125rem;
     }
 }
 
@@ -780,26 +876,27 @@
     }
 
     .case-architecture-node {
-        padding: 4.25rem 1.25rem 1.25rem;
+        padding-block: 4.25rem 1.25rem;
+        padding-inline: 1.25rem;
         scroll-snap-align: start;
     }
 
     .case-architecture-node:not(:last-child)::after {
         top: 1.5rem;
-        right: -1.25rem;
+        inset-inline-end: -1.25rem;
         bottom: auto;
-        left: auto;
+        inset-inline-start: auto;
         width: 0;
         height: 0;
         border-top: 0.5rem solid transparent;
         border-bottom: 0.5rem solid transparent;
-        border-left: 0.75rem solid var(--case-accent, #209cee);
+        border-inline-start: 0.75rem solid var(--case-accent, #209cee);
         background: transparent;
     }
 
     .case-node-index {
         top: 1.25rem;
-        left: 1.25rem;
+        inset-inline-start: 1.25rem;
     }
 
     .case-section-heading {
@@ -810,7 +907,7 @@
     }
 
     .case-section-heading > p {
-        text-align: right;
+        text-align: end;
     }
 
     .case-battle-path {
@@ -818,7 +915,7 @@
     }
 
     .case-battle-path::before {
-        left: 2.375rem;
+        inset-inline-start: 2.375rem;
     }
 
     .case-battle-step {
@@ -846,7 +943,7 @@
     }
 
     .case-battle-card::before {
-        left: -1.5rem;
+        inset-inline-start: -1.5rem;
         width: 1.5rem;
     }
 
@@ -889,8 +986,7 @@
 
 @media (max-width: 639px) {
     .case-study-main .nes-container {
-        padding-right: 1rem;
-        padding-left: 1rem;
+        padding-inline: 1rem;
     }
 
     .case-study-hero h1 {
@@ -903,7 +999,7 @@
     }
 
     .case-battle-path::before {
-        left: 1.125rem;
+        inset-inline-start: 1.125rem;
     }
 
     .case-battle-step {
@@ -927,7 +1023,7 @@
     }
 
     .case-battle-card::before {
-        left: -0.75rem;
+        inset-inline-start: -0.75rem;
         width: 0.75rem;
     }
 
