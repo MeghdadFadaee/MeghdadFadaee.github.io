@@ -77,9 +77,10 @@ for (const page of allPages) {
     assert.match(page.html, /<header\b[^>]*>\s*<nav\b/, `${page.route}: page navigation must have a header landmark`);
     assert.match(page.html, /<link rel="manifest" href="\/site\.webmanifest">/, `${page.route}: web app manifest must be linked`);
     assert.match(page.html, /<link rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png">/, `${page.route}: Apple touch icon must be linked`);
-    assert.match(page.html, /<link href="\/assets\/site\.css" rel="preload" as="style"/, `${page.route}: first-party CSS must load without blocking rendering`);
-    assert.match(page.html, /<link href="\/assets\/nes\.min\.css" rel="preload" as="style"/, `${page.route}: NES.css must load from a local asset`);
-    assert.match(page.html, /<link href="\/assets\/fonts\/fonts\.css" rel="preload" as="style"/, `${page.route}: fonts must load from local assets`);
+    assert.match(page.html, /<style id="site-styles">[\s\S]*\.nes-btn[\s\S]*\.site-brand/, `${page.route}: complete styles must be present before first paint`);
+    assert.doesNotMatch(page.html, /<link\b[^>]*(?:rel="stylesheet"|as="style")/, `${page.route}: stylesheets must not block or restyle the page after first paint`);
+    assert.doesNotMatch(page.html, /url\((?:"\.\/files\/|\.\.\/webfonts\/)/, `${page.route}: inlined stylesheet assets must use root-relative URLs`);
+    assert.match(page.html, /<link rel="preload" href="\/assets\/fonts\/files\//, `${page.route}: primary locale font must be preloaded`);
     assert.doesNotMatch(page.html, /(?:unpkg\.com\/nes\.css|fonts\.googleapis\.com|fonts\.gstatic\.com|cdnjs\.cloudflare\.com)/, `${page.route}: page assets must not depend on a CDN`);
     const ids = new Set([...page.html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
     for (const match of page.html.matchAll(/href="(\/(?!\/)[^"]*)"/g)) {

@@ -35,8 +35,12 @@ function renderSchema(site, locale, home) {
 function head(site, locale, home) {
     const pageUrl = localeAbsoluteUrl(site, locale);
     const image = `${site.url}assets/og-preview.png`;
+    const fontPreloads = locale.direction === "rtl"
+        ? `    <link rel="preload" href="/assets/fonts/files/vazirmatn-arabic-400-normal.woff2" as="font" type="font/woff2" crossorigin>\n    <link rel="preload" href="/assets/fonts/files/lalezar-arabic-400-normal.woff2" as="font" type="font/woff2" crossorigin>`
+        : `    <link rel="preload" href="/assets/fonts/files/press-start-2p-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>`;
     const otherOg = site.locales.filter((item) => item.code !== locale.code).map((item) => `    <meta property="og:locale:alternate" content="${escapeHtml(item.ogLocale)}">`).join("\n");
-    return `    <title>${escapeHtml(home.seo.title)}</title>
+    return `${fontPreloads}
+    <title>${escapeHtml(home.seo.title)}</title>
     <meta name="description" content="${escapeHtml(home.seo.description)}">
     <meta name="author" content="${escapeHtml(home.profile.name)}">
     <meta name="google-site-verification" content="r7GnylOYawm7Ty0cNnZlbeQyRgX1pTOStpal1n-G9fw">

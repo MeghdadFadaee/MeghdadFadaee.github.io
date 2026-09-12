@@ -64,7 +64,7 @@ There is no development server or file watcher. Run `npm run build` again after 
 
 | Command | Purpose |
 | --- | --- |
-| `npm run build` | Generate the static pages and sitemap, then compile and minify the CSS |
+| `npm run build` | Compile the CSS, inline it into the generated static pages, and generate the sitemaps |
 | `npm test` | Run the project-data and case-study unit tests |
 | `npm run check` | Validate the generated HTML, links, metadata, structured data, assets, and sitemap |
 | `npm run verify` | Run the production build, tests, and generated-site checks |

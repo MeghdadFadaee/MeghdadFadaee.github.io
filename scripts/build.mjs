@@ -9,13 +9,27 @@ import { loadSiteConfig, renderSiteUrlTemplate } from "./site-config.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
-const [homeTemplate, caseTemplate, robotsTemplate, site] = await Promise.all([
+const [homeTemplate, caseTemplate, robotsTemplate, site, nesCss, fontsCss, fontAwesomeCss, siteCss] = await Promise.all([
     readFile(join(root, "index.html"), "utf8"), readFile(join(root, "project.html"), "utf8"),
-    readFile(join(root, "robots.txt"), "utf8"), loadSiteConfig(join(root, "site.config.json"))
+    readFile(join(root, "robots.txt"), "utf8"), loadSiteConfig(join(root, "site.config.json")),
+    readFile(join(root, "assets", "nes.min.css"), "utf8"),
+    readFile(join(root, "assets", "fonts", "fonts.css"), "utf8"),
+    readFile(join(root, "assets", "fontawesome", "css", "all.min.css"), "utf8"),
+    readFile(join(root, "assets", "site.css"), "utf8")
 ]);
+const inlineCss = [
+    nesCss,
+    fontsCss.replaceAll('url("./files/', 'url("/assets/fonts/files/'),
+    fontAwesomeCss.replaceAll("url(../webfonts/", "url(/assets/fontawesome/webfonts/"),
+    siteCss
+].join("\n");
+if (/<\/style/i.test(inlineCss)) throw new Error("Stylesheets must not contain a closing style tag");
+const inlineStyles = `    <style id="site-styles">\n${inlineCss}\n    </style>`;
+const styledHomeTemplate = homeTemplate.replace("<!-- INLINE_STYLES -->", inlineStyles);
+const styledCaseTemplate = caseTemplate.replace("<!-- INLINE_STYLES -->", inlineStyles);
 const payloads = await Promise.all(site.locales.map((locale) => loadLocaleContent(join(root, "content", `${locale.code}.json`))));
 const localized = validateLocaleSet(site, payloads);
-for (const [template, markers] of [[homeTemplate, ["{{HTML_LANG}}", "{{HTML_DIR}}", "<!-- HOME_HEAD -->", "<!-- HOME_SCHEMA -->", "<!-- HOME_BODY -->", "<!-- HOME_SCRIPT -->"]], [caseTemplate, ["{{HTML_LANG}}", "{{HTML_DIR}}", "<!-- CASE_HEAD -->", "<!-- CASE_SCHEMA -->", "<!-- CASE_BODY -->"]]]) {
+for (const [template, markers] of [[homeTemplate, ["{{HTML_LANG}}", "{{HTML_DIR}}", "<!-- HOME_HEAD -->", "<!-- HOME_SCHEMA -->", "<!-- HOME_BODY -->", "<!-- HOME_SCRIPT -->", "<!-- INLINE_STYLES -->"]], [caseTemplate, ["{{HTML_LANG}}", "{{HTML_DIR}}", "<!-- CASE_HEAD -->", "<!-- CASE_SCHEMA -->", "<!-- CASE_BODY -->", "<!-- INLINE_STYLES -->"]]]) {
     for (const marker of markers) if (template.split(marker).length - 1 !== 1) throw new Error(`Expected exactly one ${marker} marker`);
 }
 
@@ -27,11 +41,11 @@ for (const { locale, payload } of localized) {
     await mkdir(outputRoot, { recursive: true });
     const cards = renderProjectCards(payload.projects, locale, payload.home.projects);
     cardCount += payload.projects.length;
-    await writeFile(join(outputRoot, "index.html"), renderHomePage(homeTemplate, site, locale, payload, cards), "utf8");
+    await writeFile(join(outputRoot, "index.html"), renderHomePage(styledHomeTemplate, site, locale, payload, cards), "utf8");
     for (const project of payload.projects.filter((item) => item.caseStudy)) {
         const directory = join(outputRoot, "projects", project.caseStudy.slug);
         await mkdir(directory, { recursive: true });
-        await writeFile(join(directory, "index.html"), renderCaseStudyPage(caseTemplate, project, site, locale, payload), "utf8");
+        await writeFile(join(directory, "index.html"), renderCaseStudyPage(styledCaseTemplate, project, site, locale, payload), "utf8");
         caseCount += 1;
     }
 }
