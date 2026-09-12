@@ -78,6 +78,9 @@ for (const page of allPages) {
     assert.match(page.html, /<link rel="manifest" href="\/site\.webmanifest">/, `${page.route}: web app manifest must be linked`);
     assert.match(page.html, /<link rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png">/, `${page.route}: Apple touch icon must be linked`);
     assert.match(page.html, /<link href="\/assets\/site\.css" rel="preload" as="style"/, `${page.route}: first-party CSS must load without blocking rendering`);
+    assert.match(page.html, /<link href="\/assets\/nes\.min\.css" rel="preload" as="style"/, `${page.route}: NES.css must load from a local asset`);
+    assert.match(page.html, /<link href="\/assets\/fonts\/fonts\.css" rel="preload" as="style"/, `${page.route}: fonts must load from local assets`);
+    assert.doesNotMatch(page.html, /(?:unpkg\.com\/nes\.css|fonts\.googleapis\.com|fonts\.gstatic\.com|cdnjs\.cloudflare\.com)/, `${page.route}: page assets must not depend on a CDN`);
     const ids = new Set([...page.html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
     for (const match of page.html.matchAll(/href="(\/(?!\/)[^"]*)"/g)) {
         const href = match[1], [rawPath, fragment] = href.split("#"), path = rawPath || page.route;
@@ -99,6 +102,6 @@ assert.deepEqual(xmlUrls, expectedUrls); assert.deepEqual(text.trim().split("\n"
 assert.equal((xml.match(/hreflang="x-default"/g) || []).length, 14); assert.equal((xml.match(/hreflang="en"/g) || []).length, 14); assert.equal((xml.match(/hreflang="fa"/g) || []).length, 14);
 assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.xml/); assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.txt/);
 assert.equal(await readFile(join(dist, "CNAME"), "utf8"), "megh.dad\n");
-for (const file of ["assets/preview.png", "assets/og-preview.png", "favicon.ico", "favicon.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest", ".nojekyll"]) await access(join(dist, file));
+for (const file of ["assets/preview.png", "assets/og-preview.png", "assets/nes.min.css", "assets/fonts/fonts.css", "assets/fonts/files/press-start-2p-latin-400-normal.woff2", "assets/fonts/files/lalezar-arabic-400-normal.woff2", "assets/fonts/files/vazirmatn-arabic-700-normal.woff2", "assets/fontawesome/css/all.min.css", "assets/fontawesome/webfonts/fa-brands-400.woff2", "assets/fontawesome/webfonts/fa-solid-900.woff2", "favicon.ico", "favicon.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest", ".nojekyll"]) await access(join(dist, file));
 await assert.rejects(access(join(dist, "api", "projects.json")));
 console.log("Validated 14 localized pages, 44 cards, 12 case studies, SEO alternates, schemas, and internal links");
