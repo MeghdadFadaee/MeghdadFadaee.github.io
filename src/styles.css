@@ -95,6 +95,9 @@
     }
 
     .site-brand {
+        display: inline-flex;
+        align-items: center;
+        min-height: 48px;
         min-width: 0;
         line-height: 1.8;
     }

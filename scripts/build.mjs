@@ -40,7 +40,7 @@ await writeFile(join(dist, "sitemap.xml"), renderSitemap(localized, site), "utf8
 await writeFile(join(dist, "sitemap.txt"), renderTextSitemap(localized, site), "utf8");
 await writeFile(join(dist, "robots.txt"), renderSiteUrlTemplate(robotsTemplate, site.url), "utf8");
 await writeFile(join(dist, "CNAME"), `${site.hostname}\n`, "utf8");
-for (const relative of [".nojekyll", ".well-known", "assets", "favicon.ico", "favicon.png"]) {
+for (const relative of [".nojekyll", ".well-known", "assets", "favicon.ico", "favicon.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest"]) {
     const target = join(dist, relative); await mkdir(dirname(target), { recursive: true }); await cp(join(root, relative), target, { recursive: true });
 }
 console.log(`Generated ${cardCount} localized project cards and ${caseCount} localized case-study pages`);

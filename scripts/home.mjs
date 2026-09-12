@@ -64,10 +64,10 @@ function body(site, locale, home, cards) {
     const skills = home.stats.skills.map((skill) => `<li>${escapeHtml(skill)}</li>`).join("\n                            ");
     const languageLinks = renderLanguageLinks(site, locale, n.languageAria);
     return `<a href="#main-content" class="skip-link">${escapeHtml(n.skip)}</a>
-<nav class="site-nav sticky top-0 z-50 p-4 bg-[#212529] border-b-4 border-white" aria-label="${escapeHtml(n.primaryAria)}">
+<header class="sticky top-0 z-50"><nav class="site-nav p-4 bg-[#212529] border-b-4 border-white" aria-label="${escapeHtml(n.primaryAria)}">
  <div class="container mx-auto flex justify-between items-center gap-3"><a href="${escapeHtml(root)}#hero" class="text-[#209cee] site-brand" aria-label="${escapeHtml(n.homeAria)}"><i class="nes-icon coin is-small" aria-hidden="true"></i> ${escapeHtml(home.profile.name)}</a>
  <div class="nav-actions"><div class="hidden md:flex nav-page-links"><a href="${escapeHtml(root)}#about" class="nes-btn is-primary">${escapeHtml(n.stats)}</a><a href="${escapeHtml(root)}#projects" class="nes-btn is-success">${escapeHtml(n.quests)}</a><a href="${escapeHtml(root)}#contact" class="nes-btn is-warning">${escapeHtml(n.connect)}</a></div>${languageLinks}</div></div>
-</nav>
+</nav></header>
 <main id="main-content" class="container mx-auto px-4 mt-12 space-y-20">
  <section id="hero" class="flex flex-col items-center justify-center min-h-[60vh]">
   <div class="nes-balloon ${locale.direction === "rtl" ? "from-right" : "from-left"} mb-8 text-black"><p>${escapeHtml(home.hero.greeting)}</p></div><i class="nes-octocat animate float-anim" aria-hidden="true"></i>

@@ -69,9 +69,15 @@ for (const { locale, payload } of localized) {
 const faHome = allPages.find((page) => page.route === "/fa/").html;
 for (const accidental of ["Player Stats", "Quest Log (Projects)", "Join Party", "Mission Brief", "Battle Plan", "Quest Rewards"]) assert.doesNotMatch(faHome, new RegExp(`>${regexEscape(accidental)}<`));
 assert.match(faHome, /[\u0600-\u06ff]/);
-assert.match(await readFile(join(dist, "assets", "site.css"), "utf8"), /html\[lang=fa\].*Vazirmatn/);
+const siteCss = await readFile(join(dist, "assets", "site.css"), "utf8");
+assert.match(siteCss, /html\[lang=fa\].*Vazirmatn/);
+assert.match(siteCss, /\.site-brand\{[^}]*min-height:48px/, "site brand must meet the minimum touch-target height");
 
 for (const page of allPages) {
+    assert.match(page.html, /<header\b[^>]*>\s*<nav\b/, `${page.route}: page navigation must have a header landmark`);
+    assert.match(page.html, /<link rel="manifest" href="\/site\.webmanifest">/, `${page.route}: web app manifest must be linked`);
+    assert.match(page.html, /<link rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png">/, `${page.route}: Apple touch icon must be linked`);
+    assert.match(page.html, /<link href="\/assets\/site\.css" rel="preload" as="style"/, `${page.route}: first-party CSS must load without blocking rendering`);
     const ids = new Set([...page.html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]));
     for (const match of page.html.matchAll(/href="(\/(?!\/)[^"]*)"/g)) {
         const href = match[1], [rawPath, fragment] = href.split("#"), path = rawPath || page.route;
@@ -93,6 +99,6 @@ assert.deepEqual(xmlUrls, expectedUrls); assert.deepEqual(text.trim().split("\n"
 assert.equal((xml.match(/hreflang="x-default"/g) || []).length, 14); assert.equal((xml.match(/hreflang="en"/g) || []).length, 14); assert.equal((xml.match(/hreflang="fa"/g) || []).length, 14);
 assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.xml/); assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.txt/);
 assert.equal(await readFile(join(dist, "CNAME"), "utf8"), "megh.dad\n");
-for (const file of ["assets/preview.png", "assets/og-preview.png", "favicon.ico", "favicon.png", ".nojekyll"]) await access(join(dist, file));
+for (const file of ["assets/preview.png", "assets/og-preview.png", "favicon.ico", "favicon.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest", ".nojekyll"]) await access(join(dist, file));
 await assert.rejects(access(join(dist, "api", "projects.json")));
 console.log("Validated 14 localized pages, 44 cards, 12 case studies, SEO alternates, schemas, and internal links");
