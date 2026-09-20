@@ -72,12 +72,16 @@ assert.match(faHome, /[\u0600-\u06ff]/);
 const siteCss = await readFile(join(dist, "assets", "site.css"), "utf8");
 assert.match(siteCss, /html\[lang=fa\].*Vazirmatn/);
 assert.match(siteCss, /\.site-brand\{[^}]*min-height:48px/, "site brand must meet the minimum touch-target height");
+const fontsCss = await readFile(join(dist, "assets", "fonts", "fonts.css"), "utf8");
+assert.doesNotMatch(fontsCss, /font-display:\s*optional/, "fonts must not be abandoned on slow cold loads");
+assert.equal((fontsCss.match(/font-display:\s*swap/g) || []).length, 9, "every self-hosted font face must swap in after loading");
 
 for (const page of allPages) {
     assert.match(page.html, /<header\b[^>]*>\s*<nav\b/, `${page.route}: page navigation must have a header landmark`);
     assert.match(page.html, /<link rel="manifest" href="\/site\.webmanifest">/, `${page.route}: web app manifest must be linked`);
     assert.match(page.html, /<link rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png">/, `${page.route}: Apple touch icon must be linked`);
     assert.match(page.html, /<style id="site-styles">[\s\S]*\.nes-btn[\s\S]*\.site-brand/, `${page.route}: complete styles must be present before first paint`);
+    assert.doesNotMatch(page.html, /font-display:\s*optional/, `${page.route}: fonts must not remain on the fallback face after a slow load`);
     assert.doesNotMatch(page.html, /<link\b[^>]*(?:rel="stylesheet"|as="style")/, `${page.route}: stylesheets must not block or restyle the page after first paint`);
     assert.doesNotMatch(page.html, /url\((?:"\.\/files\/|\.\.\/webfonts\/)/, `${page.route}: inlined stylesheet assets must use root-relative URLs`);
     assert.match(page.html, /<link rel="preload" href="\/assets\/fonts\/files\//, `${page.route}: primary locale font must be preloaded`);
