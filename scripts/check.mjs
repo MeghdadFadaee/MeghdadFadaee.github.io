@@ -14,6 +14,42 @@ const allPages = [];
 function regexEscape(value) { return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 function pageFile(locale, slug = null) { return join(dist, ...(locale.path ? [locale.path] : []), ...(slug ? ["projects", slug] : []), "index.html"); }
 function extractSchema(html, id) { const match = html.match(new RegExp(`<script type="application/ld\\+json" id="${id}">\\s*([\\s\\S]*?)\\s*<\\/script>`)); assert.ok(match, `${id} must exist`); return JSON.parse(match[1]); }
+async function validateIco(file, expectedSizes) {
+    const ico = await readFile(file);
+    assert.ok(ico.length >= 6, `${file}: ICO header must exist`);
+    assert.equal(ico.readUInt16LE(0), 0, `${file}: ICO reserved field must be zero`);
+    assert.equal(ico.readUInt16LE(2), 1, `${file}: image type must be ICO`);
+    const count = ico.readUInt16LE(4);
+    assert.equal(count, expectedSizes.length, `${file}: unexpected image count`);
+    const directoryEnd = 6 + count * 16;
+    assert.ok(directoryEnd <= ico.length, `${file}: ICO directory must fit in the file`);
+    const entries = [];
+    for (let index = 0; index < count; index += 1) {
+        const entry = 6 + index * 16;
+        const width = ico[entry] || 256, height = ico[entry + 1] || 256;
+        const byteLength = ico.readUInt32LE(entry + 8), offset = ico.readUInt32LE(entry + 12);
+        assert.equal(width, height, `${file}: entry ${index} must be square`);
+        assert.equal(ico.readUInt16LE(entry + 4), 1, `${file}: entry ${index} must have one color plane`);
+        assert.equal(ico.readUInt16LE(entry + 6), 32, `${file}: entry ${index} must be 32-bit`);
+        assert.ok(byteLength > 0, `${file}: entry ${index} must not be empty`);
+        assert.ok(offset >= directoryEnd && offset + byteLength <= ico.length, `${file}: entry ${index} data must be in bounds`);
+        const png = ico.subarray(offset, offset + 8).equals(Buffer.from("89504e470d0a1a0a", "hex"));
+        if (png) {
+            assert.equal(ico.readUInt32BE(offset + 16), width, `${file}: entry ${index} PNG width must match its directory entry`);
+            assert.equal(ico.readUInt32BE(offset + 20), height, `${file}: entry ${index} PNG height must match its directory entry`);
+        } else {
+            assert.ok(ico.readUInt32LE(offset) >= 40, `${file}: entry ${index} must contain a supported bitmap header`);
+            assert.equal(ico.readInt32LE(offset + 4), width, `${file}: entry ${index} bitmap width must match its directory entry`);
+            assert.equal(ico.readInt32LE(offset + 8), height * 2, `${file}: entry ${index} bitmap height must include the XOR and AND masks`);
+        }
+        entries.push({ width, offset, end: offset + byteLength });
+    }
+    assert.deepEqual(entries.map(({ width }) => width).sort((a, b) => a - b), expectedSizes);
+    const ranges = entries.toSorted((a, b) => a.offset - b.offset);
+    for (let index = 1; index < ranges.length; index += 1) assert.ok(ranges[index].offset >= ranges[index - 1].end, `${file}: image entries must not overlap`);
+    assert.equal(Math.max(...entries.map(({ end }) => end)), ico.length, `${file}: last image entry must end at EOF`);
+    return ico;
+}
 function externalLinksAreSafe(html, label) {
     for (const match of html.matchAll(/<a\b[^>]*href="https:\/\/[^\"]+"[^>]*>/g)) {
         assert.match(match[0], /target="_blank"/, `${label}: external link must open in a new tab`);
@@ -108,5 +144,9 @@ assert.equal((xml.match(/hreflang="x-default"/g) || []).length, 14); assert.equa
 assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.xml/); assert.match(robots, /Sitemap: https:\/\/megh\.dad\/sitemap\.txt/);
 assert.equal(await readFile(join(dist, "CNAME"), "utf8"), "megh.dad\n");
 for (const file of ["assets/preview.png", "assets/og-preview.png", "assets/nes.min.css", "assets/fonts/fonts.css", "assets/fonts/files/press-start-2p-latin-400-normal.woff2", "assets/fonts/files/lalezar-arabic-400-normal.woff2", "assets/fonts/files/vazirmatn-arabic-700-normal.woff2", "assets/fontawesome/css/all.min.css", "assets/fontawesome/webfonts/fa-brands-400.woff2", "assets/fontawesome/webfonts/fa-solid-900.woff2", "favicon.ico", "favicon.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "site.webmanifest", ".nojekyll"]) await access(join(dist, file));
+const expectedFaviconSizes = [16, 32, 48, 64, 128, 256];
+const sourceFavicon = await validateIco(join(root, "favicon.ico"), expectedFaviconSizes);
+const builtFavicon = await validateIco(join(dist, "favicon.ico"), expectedFaviconSizes);
+assert.deepEqual(builtFavicon, sourceFavicon, "dist/favicon.ico must be an exact copy of the source favicon");
 await assert.rejects(access(join(dist, "api", "projects.json")));
 console.log("Validated 14 localized pages, 44 cards, 12 case studies, SEO alternates, schemas, and internal links");
